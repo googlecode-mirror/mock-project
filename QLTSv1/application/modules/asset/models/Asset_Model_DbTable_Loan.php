@@ -52,19 +52,28 @@
         }
 
         public function setDate($ItemID,$value){
-            $data=array('Date'=>$value);
+            $data = array('Date'=>$value);
             $this->update($data,'ItemID= '.(int)$ItemID);
         }
 
         //Get du lieu theo ItemID
         public function getFromItemID($ItemID){
-            $ItemID=(int)$ItemID;
-            $row=$this->fetchRow('ItemID = '.$ItemID);
-            if(!$row)
-            {
+            $ItemID = (int) $ItemID;
+            $row=$this->fetchRow('ItemID = '. $ItemID);
+            if(!$row) {
                 throw new Exception("Không tìm thấy tài sản đang được mượn theo yêu cầu");
             }
             return $row->toArray();
+        }
+        
+        //Get du lieu theo UserID
+        public function getFromUserID($UserID) {
+            $UserID = (int) $UserID;
+            $result=$this->fetchAll('UserID = '. $UserID);
+            if(!$result) {
+                throw new Exception("Không tìm thấy tài sản đang nào được user mượn");
+            }
+            return $result;
         }
     }
 ?>
