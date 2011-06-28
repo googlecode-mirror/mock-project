@@ -1,3 +1,10 @@
+<?php
+$this->headLink()->appendStylesheet($this->baseUrl('/css/style.css', 'screen'));
+// fix css for IE8 or LOWER
+$this->headLink()->appendStylesheet($this->baseUrl('/css/style-ie.css', 'all', 'lte IE 8'));
+$this->headScript()->appendFile($this->baseUrl() . '/js/');
+?>
+
 <?php echo $this->doctype(); ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -9,7 +16,7 @@
     </head>
 
     <body>
-        <h1> User Default Template</h1>
+        <h1> Default Template</h1>
         <?php echo $this->layout()->content; ?>
     </body>
 </html>

@@ -4,11 +4,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
     protected function _initAutoload() {
 
-        $modelLoader = new Zend_Application_Module_Autoloader(array(
+        $defaultModuleAutoloader = new Zend_Application_Module_Autoloader(array(
                     'namespace' => 'Front_',
                     'basePath' => APPLICATION_PATH . '/modules/front'));
 
-        return $modelLoader;
+        return $defaultModuleAutoloader;
     }
 
     protected function _initDb() {
@@ -32,11 +32,28 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         Zend_Session::start();
     }
 
-//    protected function _initPlugins() {
-//        $front = Zend_Controller_Front::getInstance();
-//        $front->registerPlugin(new Default_Plugin_AccessControl(new Default_Model_UserAcl()));
-//        return $front;
-//    }
+    protected function _initMail() {
+
+        $mailServerOptions = $this->getOption('mailserver');
+        $smtpHost = $mailServerOptions['host'];
+        unset($mailServerOptions['host']);
+
+        $mailTransport = new Zend_Mail_Transport_Smtp($smtpHost, $mailServerOptions);
+        Zend_Mail::setDefaultTransport($mailTransport);
+        Zend_Mail::getDefaultFrom($mailServerOptions['username'], 'Web system');
+//        Zend_Mail::setDefaultReplyTo($mailServerOptions['username'],'Web system');
+    }
+
+    protected function _initPlugins() {
+        $front = Zend_Controller_Front::getInstance();
+        
+        require_once 'ZendExt/Controller/Plugin/AccessControl.php';
+        require_once 'ZendExt/Acl.php';
+        
+        $front->registerPlugin(new ZendExt_Controller_Plugin_AccessControl(new ZendExt_Acl()));
+        return $front;
+    }
+
 //
 //    protected function _initLocale() {
 //
@@ -65,33 +82,22 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 //        $registry = Zend_Registry::getInstance();
 //        $registry->set('Zend_Translate', $translate);
 //    }
-
-    protected function _initView() {
-
-        $this->bootstrap('layout');
-        $layout = $this->getResource('layout');
-        $view = $layout->getView();
-
-        $view->setEncoding('UTF-8');
-        $view->doctype('XHTML1_STRICT');
-        $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8')
-                ->appendHttpEquiv('Content-Language', 'vi-VN');
-        
-        $view->headLink(array('rel' => 'shortcut icon', 'href' => 'favicon.ico', 'type' => 'image/x-icon'), 'append');
-        
-//        $view->headLink()->appendStylesheet($view->baseUrl('/css/style.css', 'screen'));
-//        $view->headLink()->appendStylesheet($view->baseUrl('/css/style-ie.css', 'all', 'lte IE 8'));// fix css for IE8 or LOWER
-//        // Script
-//        $view->headScript()->appendFile($baseUrl . '/js/');
-//        // View Helper
-//        $view->addHelperPath("Zend/View/Helper/", "Zend_View_Helper");
-//        $view->addHelperPath("ZendX/JQuery/View/Helper", "ZendX_JQuery_View_Helper");
-//        $view->addHelperPath("Ext/View/Helper", "Ext_View_Helper");
-//        $view->addHelperPath("Zend/Dojo/View/Helper", "Zend_Dojo_View_Helper");
-//        Zend_Controller_Action_HelperBroker::addHelper(new Zend_Controller_Action_Helper_ViewRenderer($view));
-        
-        return $view;
-    }
-
+//
+//    protected function _initView() {
+//
+//        $this->bootstrap('layout');
+//        $layout = $this->getResource('layout');
+//        $view = $layout->getView();
+//
+//        $view->setEncoding('UTF-8');
+//        $view->doctype('XHTML1_STRICT');
+//        $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8')
+//                ->appendHttpEquiv('Content-Language', 'vi-VN');
+//        
+//        $view->headLink(array('rel' => 'shortcut icon', 'href' => 'favicon.ico', 'type' => 'image/x-icon'), 'append');
+//        
+//        
+//        return $view;
+//    }
 }
 

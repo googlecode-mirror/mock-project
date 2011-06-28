@@ -6,26 +6,23 @@ class Front_AuthController extends Zend_Controller_Action {
         /* Initialize action controller here */
     }
 
-//    public function preDispatch() {
-//        if (Zend_Auth::getInstance()->hasIdentity()) {
-//            // logined
-//            if ('login' == $this->getRequest()->getActionName()) {
-//                $this->_helper->redirect('/home');
-//            }
-//        } else {
-//            if ('login' != $this->getRequest()->getActionName()) {
-//                $this->_helper->redirect('/login');
-//            }
-//        }
-//    }
-
-    public function indexAction() {
-        $this->_forward('login');
+    public function preDispatch() {
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            // logined
+            if ('login' == $this->getRequest()->getActionName()) {
+                $this->_helper->redirect('/index');
+            }
+        } else {
+            // not login
+            if ('login' != $this->getRequest()->getActionName()) {
+                $this->_helper->redirect('/auth/login');
+            }
+        }
     }
 
     public function loginAction() {
         if (Zend_Auth::getInstance()->hasIdentity()) {
-//            $this->_redirect('/home');
+            $this->_redirect('/index');
         }
         $form = new Front_Form_Login();
         if ($this->_request->isPost()) {
@@ -36,7 +33,7 @@ class Front_AuthController extends Zend_Controller_Action {
 
                 $authAdapter = $this->getAuthAdapter();
                 $authAdapter->setIdentity($uname)
-                        ->setCredential(User_Model_DbTable_Uses::encodePassword($passwd));
+                        ->setCredential($this->encodePassword($passwd));
                 $auth = Zend_Auth::getInstance();
                 $result = $auth->authenticate($authAdapter);
 
@@ -57,7 +54,7 @@ class Front_AuthController extends Zend_Controller_Action {
                         // login successfully
                         $this->_helper->getHelper('FlashMessenger')->addMessage('You were successfully logged in.');
                         //                        $this->_redirect('/user/' . Zend_Auth::getInstance()->getIdentity()->username);
-                        $this->_redirect('/login/success');
+                        $this->_redirect('/auth/success');
                     }
                 }
             }
@@ -77,15 +74,20 @@ class Front_AuthController extends Zend_Controller_Action {
     public function logoutAction() {
         Zend_Auth::getInstance()->clearIdentity();
         Zend_Session::destroy();
-        $this->_redirect('/home');
+        $this->_redirect('/');
     }
 
     private function getAuthAdapter() {
         $authAdapter = new Zend_Auth_Adapter_DbTable(Zend_Db_Table::getDefaultAdapter());
-        $authAdapter->setTableName('users') // set users table name
+        $authAdapter->setTableName('memberinfor') // set users table name
                 ->setIdentityColumn('username') // set username colum name
                 ->setCredentialColumn('password'); // set password colum name
         return $authAdapter;
+    }
+
+    private function encodePassword($passwd) {
+//        return hash('sha256', 'hedspi' . $passwd . 'isk52');
+        return $passwd;
     }
 
 }
