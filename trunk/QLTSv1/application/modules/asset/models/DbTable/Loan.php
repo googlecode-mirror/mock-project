@@ -100,8 +100,10 @@
                 $sql = $sql. ' AND loaninfor.Date <= ' . $EndDate;
             }
             $sql=$sql.';';
-            $result = $this->fetchAll($this->select()->join('memberinfor as m','m.UserID = loaninfor.UserID')
-                                                     ->where($sql));
+            $select=$this->select(Zend_Db_Table::SELECT_WITH_FROM_PART)
+                         ->setIntegrityCheck(false);
+            $result = $this->fetchAll($select->join('memberinfor as m','m.UserID = loaninfor.UserID','Username')
+                                             ->where($sql));
             if(!$result){
                 return null;
             }
