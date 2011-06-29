@@ -1,22 +1,16 @@
-<?php
-$this->headLink()->appendStylesheet($this->baseUrl('/css/style.css', 'screen'));
-// fix css for IE8 or LOWER
-$this->headLink()->appendStylesheet($this->baseUrl('/css/style-ie.css', 'all', 'lte IE 8'));
-$this->headScript()->appendFile($this->baseUrl() . '/js/');
-?>
-
-<?php echo $this->doctype(); ?>
+<?php include_once 'html/_config.phtml'; ?>
+<?php echo $this->doctype() . PHP_EOL; ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <?php echo $this->headTitle(); ?>
-        <?php echo $this->headMeta(); ?>
-        <?php echo $this->headLink(); ?>   
-        <?php echo $this->headStyle(); ?>
-        <?php echo $this->headScript(); ?>   
+        <?php echo $this->headTitle() . PHP_EOL; ?>
+        <?php echo $this->headMeta() . PHP_EOL; ?>
+        <?php echo $this->headLink() . PHP_EOL; ?>
+        <?php echo $this->headStyle() . PHP_EOL; ?>
+        <?php echo $this->headScript() . PHP_EOL; ?>   
     </head>
-
     <body>
-        <h1> Default Template</h1>
-        <?php echo $this->layout()->content; ?>
+        <?php include_once 'html/_banner.phtml'; ?>
+        <?php echo $this->layout()->content . PHP_EOL; ?>
+        <?php include_once 'html/_footer.phtml'; ?>
     </body>
 </html>
