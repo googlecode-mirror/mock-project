@@ -1,0 +1,27 @@
+<?php
+/**
+ * File : _config.phtml
+ * Versoin : 1.0
+ * Date : 29/06/2011
+ */
+
+// Set encoding
+$this->setEncoding('UTF-8');
+
+// Set doctype
+$this->doctype('XHTML1_STRICT');
+
+// Set meta
+$this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8')
+        ->appendHttpEquiv('Content-Language', 'vi-VN');
+
+// Set favicon
+$this->headLink(array('rel' => 'shortcut icon', 'href' => 'favicon.ico', 'type' => 'image/x-icon'), 'append');
+
+// Set css style
+$this->headLink()->appendStylesheet($this->baseUrl('application/template/css/style.css', 'screen'));
+// fix css for IE8 or LOWER
+//$this->headLink()->appendStylesheet($this->baseUrl('/css/style-ie.css', 'all', 'lte IE 8'));
+// Set js script
+$this->headScript()->appendFile($this->baseUrl() . 'application/template/js/jquery.js');
+?>
