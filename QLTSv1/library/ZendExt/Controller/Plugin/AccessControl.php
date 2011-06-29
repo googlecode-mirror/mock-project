@@ -20,22 +20,29 @@ class ZendExt_Controller_Plugin_AccessControl extends Zend_Controller_Plugin_Abs
         $action = $request->getActionName();
 
         // get role of current user
-        $identity = $this->_auth->getIdentity();
-        switch ($identity->Role) {
-            case 0: // Super Admin
-                $role = "superadmin";
-                break;
-            case 1: // Admin
-                $role = "admin";
-                break;
-            case 2: // IT
-                $role = "it";
-                break;
-            default : // User
-                $role = "user";
-                break;
+        if ($this->_auth->hasIdentity()) {
+            // login
+            $identity = $this->_auth->getIdentity();
+            switch ($identity->Role) {
+                case 0: // Super Admin
+                    $role = "superadmin";
+                    break;
+                case 1: // Admin
+                    $role = "admin";
+                    break;
+                case 2: // IT
+                    $role = "it";
+                    break;
+                default : // User
+                    $role = "user";
+                    break;
+            }
+            
+        } else {
+            // not login
+            $role = NULL;
         }
-        $role = $identity->Role;
+        echo "$role";
 
 //        if (!$this->_acl->isAllowed($role, $module . ':' . $controller, $action)) {
 //            // Not allowed access
