@@ -1,12 +1,41 @@
 <?php
 
+/**
+ * Class ZendExt_Acl
+ * 
+ * @package ZendExt
+ * @version 1.0
+ * @author OanhNN
+ * 
+ * @todo Access control list
+ */
 class ZendExt_Acl extends Zend_Acl {
 
+    /**
+     * function __construct()
+     * 
+     * @todo construct class
+     * @param null
+     * @return null
+     */
     public function __construct() {
+        $this->acl();
+    }
+
+    /**
+     * function acl()
+     * 
+     * @todo access control with role of user
+     * @param null
+     * @return null
+     */
+    public function acl() {
+        
         // User type
         $this->addRole(new Zend_Acl_Role(NULL));
         $this->addRole(new Zend_Acl_Role('users'), NULL);
         $this->addRole(new Zend_Acl_Role('admins'), 'users');
+        
         // module default
         $this->add(new Zend_Acl_Resource('default'))
                 ->add(new Zend_Acl_Resource('default:comment'), 'default')
@@ -18,12 +47,14 @@ class ZendExt_Acl extends Zend_Acl {
                 ->add(new Zend_Acl_Resource('default:test'), 'default')
                 ->add(new Zend_Acl_Resource('default:time'), 'default')
                 ->add(new Zend_Acl_Resource('default:translate'), 'default');
+        
         // module user
         $this->add(new Zend_Acl_Resource('user'))
                 ->add(new Zend_Acl_Resource('user:login'), 'user')
                 ->add(new Zend_Acl_Resource('user:manage'), 'user')
                 ->add(new Zend_Acl_Resource('user:profile'), 'user')
                 ->add(new Zend_Acl_Resource('user:register'), 'user');
+        
         // module admin
         $this->add(new Zend_Acl_Resource('admin'))
                 ->add(new Zend_Acl_Resource('admin:file'), 'admin')
@@ -31,6 +62,7 @@ class ZendExt_Acl extends Zend_Acl {
                 ->add(new Zend_Acl_Resource('admin:notice'), 'admin')
                 ->add(new Zend_Acl_Resource('admin:subject'), 'admin')
                 ->add(new Zend_Acl_Resource('admin:user'), 'admin');
+        
         //
         $this->allow(NULL, 'default:contact', array('index', 'success'))
                 ->allow(NULL, 'default:error', 'error')
@@ -45,6 +77,7 @@ class ZendExt_Acl extends Zend_Acl {
                 ->allow(NULL, 'user:register', array('index', 'activate', 'ajax', 'success'))
                 ->deny(NULL, 'admin')
                 ->allow(NULL, 'admin:file', array('index'));
+        
         //
         $this->allow('users', 'user:login', array('success', 'logout'))
                 ->allow('users', 'default:comment', array('add', 'delete'))
@@ -52,6 +85,7 @@ class ZendExt_Acl extends Zend_Acl {
                 ->deny('users', 'user:login', 'login')
                 ->deny('users', 'admin:index', 'index')
                 ->deny('users', 'admin');
+        
         //
         $this->allow('admins', 'admin:file', array('index', 'upload', 'download', 'delete'))
                 ->allow('admins', 'admin:index', 'index')
