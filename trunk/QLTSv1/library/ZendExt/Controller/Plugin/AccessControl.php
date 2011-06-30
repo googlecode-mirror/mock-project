@@ -1,18 +1,50 @@
 <?php
 
-require_once 'ZendExt/Acl.php';
-
+/**
+ * Class ZendExt_Controller_Plugin_AccessControl
+ * 
+ * @package ZendExt
+ * @version 1.0
+ * @author OanhNN
+ * 
+ * @todo Access control
+ */
 class ZendExt_Controller_Plugin_AccessControl extends Zend_Controller_Plugin_Abstract {
 
+    /**
+     * @var ZendExt_Acl
+     */
     private $_acl = NULL;
+    /**
+     * @var Zend_Auth
+     */
     private $_auth = NULL;
 
+    /**
+     * function __construct()
+     * 
+     * @todo construct class
+     * @param null
+     * @return null
+     */
     public function __construct() {
+
+        /**
+         * @see ZendExt_Acl
+         */
+        require_once 'ZendExt/Acl.php';
         // get info of current user
         $this->_auth = Zend_Auth::getInstance();
         $this->_acl = new ZendExt_Acl();
     }
 
+    /**
+     * function preDispatch()
+     * 
+     * @todo Control request access
+     * @param Zend_Controller_Request_Abstract $request
+     * @return null
+     */
     public function preDispatch(Zend_Controller_Request_Abstract $request) {
         // get info of request
         $module = $request->getModuleName();
@@ -37,7 +69,6 @@ class ZendExt_Controller_Plugin_AccessControl extends Zend_Controller_Plugin_Abs
                     $role = "user";
                     break;
             }
-            
         } else {
             // not login
             $role = NULL;
