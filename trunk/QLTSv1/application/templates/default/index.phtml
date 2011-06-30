@@ -9,8 +9,10 @@
         <?php echo $this->headScript() . PHP_EOL; ?>   
     </head>
     <body>
-        <?php include_once 'html/_banner.phtml'; ?>
-        <?php echo $this->layout()->content . PHP_EOL; ?>
-        <?php include_once 'html/_footer.phtml'; ?>
+        <div id="wapper">
+            <div id="banner"><?php include_once 'html/_banner.phtml'; ?></div>
+            <div id="content"><?php echo $this->layout()->content . PHP_EOL; ?></div>
+            <div id="footer"><?php include_once 'html/_footer.phtml'; ?></div>
+        </div>
     </body>
 </html>
