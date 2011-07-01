@@ -1,10 +1,12 @@
 <?php
 /*
- * Classname: Asset_Model_DbTable_Upgrade
- *
- * Version 1.0
- *
- * Date: 27/06/2011
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       Upgrade
+;
+;       @package Modules/asset/models
+;       @version 1.0
+;       @author TuanNA18
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  */
     class Asset_Model_DbTable_Upgrade extends Zend_Db_Table_Abstract{
 
