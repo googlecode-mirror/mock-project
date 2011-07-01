@@ -63,7 +63,7 @@
         }
 
         public function setDate($id, $value){
-            $data = array('Date'=>$LUserID);
+            $data = array('Date'=>$value);
             $this->update($data, 'RequestID = ' . $this->_db->quote($id, 'INTEGER'));
         }
 

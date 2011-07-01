@@ -29,10 +29,20 @@
              return 1;
         }
 
+        //Lay thong tin tai san theo ID
+        public function getItemFromID($id){
+            $id=(int)$id;
+            $row = $this->fetchRow('ItemID = ' . $this->_db->quote($id, 'INTEGER'));
+            if (!$row) {
+               return null;
+            }
+            return $row->toArray();
+        }
+
         //Xoa mot tai san theo ID cua no
         public function deleteItem($id){
              $id = (int) $id;
-             $arr=getItemFromID($id);
+             $arr=$this->getItemFromID($id);
              if($arr['Status']==1){
                  return 0;                  //Lỗi item đang được cho mượn, không xóa được
              }
@@ -116,15 +126,7 @@
              $this->update($data,'id = ' . $this->_db->quote($id, 'INTEGER'));
         }
 
-        //Lay thong tin tai san theo ID
-        public function getItemFromID($id){
-            $id=(int)$id;
-            $row = $this->fetchRow('ItemID = ' . $this->_db->quote($id, 'INTEGER'));
-            if (!$row) {
-               return null;
-            }
-            return $row->toArray();
-        }
+        
 
         //Lay thong tin tai san theo Ma
         public function getItemFromMa($Ma){

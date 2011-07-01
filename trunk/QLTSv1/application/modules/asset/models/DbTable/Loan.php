@@ -62,7 +62,7 @@
 
         //Get du lieu theo ItemID
         public function getLoanFromMa($Ma){
-            $this->update($data,'Ma_tai_san = ' . $this->_db->quote($Ma));
+            $row=$this->fetchAll('Ma_tai_san = ' . $this->_db->quote($Ma));
             if(!$row) {
                 throw new Exception("Không tìm thấy tài sản đang được mượn theo yêu cầu");
             }
@@ -90,7 +90,7 @@
         }
         public function getLoanFromUsername($Name, $StartDate, $EndDate){
             $sql = '1=1';
-            if($UserID!=null){
+            if($Name!=null){
                 $sql = $sql. ' AND m.Username LIKE %'.$Name.'%';
             }
             if($StartDate!=null){
