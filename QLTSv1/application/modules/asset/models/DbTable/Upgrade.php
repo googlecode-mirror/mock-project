@@ -13,8 +13,8 @@
         //Them mot Upgrade voi cac thuoc tinh di kem
         public function addUpgrade($UserID, $ManagerID, $ItemID, $Detail, $Date) {
             $data = array(
-                    'UserID'=>$LUserID,
-                    'ManagerID'=>$RUserID,
+                    'UserID'=>$UserID,
+                    'ManagerID'=>$ManagerID,
                     'ItemID'=>$ItemID,
                     'Detail'=>$Detail,
                     'Date'=>$Date
@@ -56,7 +56,7 @@
         }
 
         public function setDetail($id, $value){
-            $data = array('Detail'=>$LUserID);
+            $data = array('Detail'=>$value);
             $this->update($data, 'UpgradeID = ' . $this->_db->quote($id, 'INTEGER'));
         }
 

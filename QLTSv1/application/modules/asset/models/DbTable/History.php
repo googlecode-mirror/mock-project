@@ -56,7 +56,7 @@
         }
 
         public function setDetail($id, $value){
-            $data = array('Detail'=>$LUserID);
+            $data = array('Detail'=>$value);
             $this->update($data, 'HistoryID = ' . $this->_db->quote($id, 'INTEGER'));
         }
 
