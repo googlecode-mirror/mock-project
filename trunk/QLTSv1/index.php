@@ -6,7 +6,6 @@
  * @version 1.0
  * @license
  */
-
 /**
  * Index file
  * 
@@ -23,6 +22,10 @@ defined('APPLICATION_PATH')
 // Define application environment
 defined('APPLICATION_ENV')
         || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development'));
+
+// Define template name
+defined('TEMPLATE_NAME')
+        || define('TEMPLATE_NAME', (getenv('TEMPLATE_NAME') ? getenv('TEMPLATE_NAME') : 'default'));
 
 // Ensure library/ is on include_path
 set_include_path(implode(PATH_SEPARATOR, array(

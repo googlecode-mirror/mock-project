@@ -7,9 +7,7 @@ class Front_MailController extends Zend_Controller_Action {
     
     public function indexAction(){
         $mail = new Zend_Mail();
-        $mail->setFrom('ngocoanh.bk52@gmail.com', '')
-                ->addTo('ngocoanh.bk52@gmail.com', 'Ngoc Oanh')
-                ->setReplyTo('ngocoanh.bk52@gmail.com', 'OanhNN')
+        $mail->addTo('ngocoanh.bk52@gmail.com', 'Ngoc Oanh')
                 ->setSubject('Test Zend_Mail')
                 ->setBodyHtml('<h3>Test Zend_Mail body</h3>');
         if ($mail->send()) {
