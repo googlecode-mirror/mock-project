@@ -1,12 +1,12 @@
 <?php
 /*
- * Classname: Asset_Model_DbTable_Loan
- *
- * Version 1.0
- *
- * 27/06/2011
- *
- * 
+ *;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       Loan
+;
+;       @package Modules/asset/models
+;       @version 1.0
+;       @author TuanNA18
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  */
     class Asset_Model_DbTable_Loan extends Zend_Db_Table_Abstract
     {

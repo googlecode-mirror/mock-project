@@ -1,10 +1,12 @@
 <?php
 /*
- * Classname: Asset_Model_DbTable_Request
- *
- * Version 1.0
- *
- * Date: 27/06/2011
+ * ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       Request
+;
+;       @package Modules/asset/models
+;       @version 1.0
+;       @author TuanNA18
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  */
     class Asset_Model_DbTable_Request extends Zend_Db_Table_Abstract{
         protected $_name='requestinfor';       //Ten bang thao tac
