@@ -1,0 +1,12 @@
+<?php
+
+if ($this->showMessegers == TRUE) {
+    echo "You haven't permission access.";
+    echo "<br />";
+    echo "Please <a href='"
+    . $this->url(array('module' => 'front', 'controller' => 'mail', 'action' => 'index'))
+    . "'>contact to Webmaster</a> or <a href='"
+    . $this->url(array('module' => 'front', 'controller' => 'auth', 'action' => 'logout'))
+    . "' >login with other account</a>";
+}
+?>

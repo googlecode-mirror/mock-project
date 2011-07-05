@@ -5,20 +5,24 @@ class User_UserController extends Zend_Controller_Action {
     public function init() {
         /* Initialize action controller here */
     }
-//
-//    public function preDispatch() {
-//        // check quyen superadmin
-//        $auth = Zend_Auth::getInstance();
-//        if (!$auth->hasIdentity()) {
-//            $this->_redirect('/front/auth/login');
-//        } elseif ($auth->getIdentity()->Role != 0) {
-//            // TODO link den trang bao loi ko du quyen
-//            $this->_redirect('/front/auth/login');
-//        }
-//    }
-    public function listAction(){
-        echo "TODO";
-        // TODO
+
+    public function preDispatch() {
+        // check quyen SuperAdmin
+        $auth = Zend_Auth::getInstance();
+        if (!$auth->hasIdentity()) {
+            $this->_redirect('/front/auth/login');
+        } elseif ($auth->getIdentity()->Role != 0) {
+            // TODO link den trang bao loi ko du quyen
+            $this->_helper->getHelper('FlashMessenger')->addMessage("You haven't permission.");
+//            $this->_redirect('/user/' . Zend_Auth::getInstance()->getIdentity()->username);
+            $this->_redirect('/front/auth/nopermission');
+        }
+    }
+
+    public function listAction() {
+        include_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
+        $members = new User_Model_DbTable_Member();
+        $this->view->members = $members->fetchAll();
     }
 
     public function detailAction() {
@@ -73,7 +77,7 @@ class User_UserController extends Zend_Controller_Action {
     public function editAction() {
         include_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
         include_once APPLICATION_PATH . '/modules/user/forms/User.php';
-        
+
         $form = new User_Form_User();
 //        $form->submit->setLabel('Save');
         $this->view->form = $form;
@@ -108,7 +112,7 @@ class User_UserController extends Zend_Controller_Action {
             }
         } else {
             $UserID = (int) $this->_getParam('UserID', -1);
-            if ($UserID > 0 ) {
+            if ($UserID > 0) {
                 $member = new User_Model_DbTable_Member();
                 $form->populate($member->getMember($UserID));
             } else {

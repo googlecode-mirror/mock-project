@@ -33,65 +33,51 @@ class ZendExt_Acl extends Zend_Acl {
         
         // User type
         $this->addRole(new Zend_Acl_Role(NULL));
-        $this->addRole(new Zend_Acl_Role('users'), NULL);
-        $this->addRole(new Zend_Acl_Role('admins'), 'users');
+        $this->addRole(new Zend_Acl_Role('IT'), NULL);
+        $this->addRole(new Zend_Acl_Role('User'), NULL);
+        $this->addRole(new Zend_Acl_Role('Admin'), NULL);
+        $this->addRole(new Zend_Acl_Role('SuperAdmin'), NULL);
         
-        // module default
-        $this->add(new Zend_Acl_Resource('default'))
-                ->add(new Zend_Acl_Resource('default:comment'), 'default')
-                ->add(new Zend_Acl_Resource('default:contact'), 'default')
-                ->add(new Zend_Acl_Resource('default:error'), 'default')
-                ->add(new Zend_Acl_Resource('default:file'), 'default')
-                ->add(new Zend_Acl_Resource('default:index'), 'default')
-                ->add(new Zend_Acl_Resource('default:notice'), 'default')
-                ->add(new Zend_Acl_Resource('default:test'), 'default')
-                ->add(new Zend_Acl_Resource('default:time'), 'default')
-                ->add(new Zend_Acl_Resource('default:translate'), 'default');
+        // module front
+        $this->add(new Zend_Acl_Resource('front'))
+                ->add(new Zend_Acl_Resource('front:index'), 'front')
+                ->add(new Zend_Acl_Resource('front:auth'), 'front')
+                ->add(new Zend_Acl_Resource('front:error'), 'front')
+                ->add(new Zend_Acl_Resource('front:mail'), 'front');
         
         // module user
         $this->add(new Zend_Acl_Resource('user'))
-                ->add(new Zend_Acl_Resource('user:login'), 'user')
-                ->add(new Zend_Acl_Resource('user:manage'), 'user')
+                ->add(new Zend_Acl_Resource('user:index'), 'user')
                 ->add(new Zend_Acl_Resource('user:profile'), 'user')
-                ->add(new Zend_Acl_Resource('user:register'), 'user');
+                ->add(new Zend_Acl_Resource('user:user'), 'user');
         
-        // module admin
-        $this->add(new Zend_Acl_Resource('admin'))
-                ->add(new Zend_Acl_Resource('admin:file'), 'admin')
-                ->add(new Zend_Acl_Resource('admin:index'), 'admin')
-                ->add(new Zend_Acl_Resource('admin:notice'), 'admin')
-                ->add(new Zend_Acl_Resource('admin:subject'), 'admin')
-                ->add(new Zend_Acl_Resource('admin:user'), 'admin');
+        // module asset
+        $this->add(new Zend_Acl_Resource('asset'))
+                ->add(new Zend_Acl_Resource('asset:history'), 'asset')
+                ->add(new Zend_Acl_Resource('admin:item'), 'asset')
+                ->add(new Zend_Acl_Resource('admin:loan'), 'asset')
+                ->add(new Zend_Acl_Resource('admin:request'), 'asset')
+                ->add(new Zend_Acl_Resource('admin:upgrade'), 'asset');
         
-        //
-        $this->allow(NULL, 'default:contact', array('index', 'success'))
-                ->allow(NULL, 'default:error', 'error')
-                ->allow(NULL, 'default:file', array('index'))
-                ->allow(NULL, 'default:index', array('index', 'about', 'link'))
-                ->allow(NULL, 'default:notice', array('index', 'show'))
-                ->allow(NULL, 'default:test', array('index'))
-                ->allow(NULL, 'default:time', 'index')
-                ->allow(NULL, 'default:translate', 'index')
-                ->deny(NULL, 'user')
-                ->allow(NULL, 'user:login', 'login')
-                ->allow(NULL, 'user:register', array('index', 'activate', 'ajax', 'success'))
-                ->deny(NULL, 'admin')
-                ->allow(NULL, 'admin:file', array('index'));
+//        $this->allow('users', 'user:login', array('success', 'logout'))
+//                ->allow('users', 'default:comment', array('add', 'delete'))
+//                ->allow('users', 'user:profile', array('index', 'edit', 'repassword', 'chpassword'))
+//                ->deny('users', 'user:login', 'login')
+//                ->deny('users', 'admin:index', 'index')
+//                ->deny('users', 'admin');
+        // Permission of NULL user
+        $this->allow(NULL, 'front:index', array('index'))
+            ->allow(NULL, 'front:auth', array('login', 'logout', 'success', 'nopermission'))
+            ->allow(NULL, 'front:error', 'error')
+            ->allow(NULL, 'front:mail', 'index');
         
-        //
-        $this->allow('users', 'user:login', array('success', 'logout'))
-                ->allow('users', 'default:comment', array('add', 'delete'))
-                ->allow('users', 'user:profile', array('index', 'edit', 'repassword', 'chpassword'))
-                ->deny('users', 'user:login', 'login')
-                ->deny('users', 'admin:index', 'index')
-                ->deny('users', 'admin');
-        
-        //
-        $this->allow('admins', 'admin:file', array('index', 'upload', 'download', 'delete'))
-                ->allow('admins', 'admin:index', 'index')
-                ->allow('admins', 'admin:notice', array('index', 'add', 'edit', 'delete'))
-                ->allow('admins', 'admin:subject', array('index', 'add', 'edit', 'delete'))
-                ->allow('admins', 'user:manage', array('index', 'add', 'edit', 'ban', 'delete'));
+//        // Permission of IT user
+//        $this->allow('IT', 'front:index', 'index')
+//            ->allow('IT', 'front:auth', array('success', 'nopermission'));
+//        
+//        // Permission of User user
+//        $this->allow('User', 'front:index', 'index')
+//                ->allow('User', 'front', $privileges);
     }
 
 }

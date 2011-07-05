@@ -14,7 +14,9 @@ class User_ProfileController extends Zend_Controller_Action {
             $member = new User_Model_DbTable_Member();
             $this->view->member = $member->getMember($UserID);
         } else {
-            // ko co quyen truy cap
+            $this->_helper->getHelper('FlashMessenger')->addMessage("You haven't permission.");
+//            $this->_redirect('/user/' . Zend_Auth::getInstance()->getIdentity()->username);
+            $this->_redirect('/front/auth/nopermission');
         }
     }
 
@@ -58,7 +60,9 @@ class User_ProfileController extends Zend_Controller_Action {
                 $member = new User_Model_DbTable_Member();
                 $form->populate($member->getMember($UserID));
             } else {
-                // ko co quyen truy cap
+                $this->_helper->getHelper('FlashMessenger')->addMessage("You haven't permission.");
+//                $this->_redirect('/user/' . Zend_Auth::getInstance()->getIdentity()->username);
+                $this->_redirect('/front/auth/nopermission');
             }
         }
     }

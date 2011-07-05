@@ -1,7 +1,26 @@
-<?php
+<a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'add')); ?>">Add new user</a>
+<br />
+<table>
+    <tr>
+        <th>Username</th>
+        <th>Fullname</th>
+        <th>Role</th>
+        <th>Group</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+    </tr>
+    <?php foreach ($this->members as $member): ?>
+    <tr>
+        <td><?php echo $this->escape($member->Username); ?></td>
+        <td><?php echo $this->escape($member->FullName); ?></td>
+        <td><?php echo $this->escape($member->Role); ?></td>
+        <td><?php echo $this->escape($member->Group); ?></td>
+        <td><a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'detail', 'UserID' => $member->UserID)); ?>">Detail</a></td>
+        <td><a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'edit', 'UserID' => $member->UserID)); ?>">Edit</a></td>
+        <td><a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'delete', 'UserID' => $member->UserID)); ?>">Delete</a></td>
+    </tr>
+    <?php endforeach;?>
+</table>
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-?>
+<!--<a href="" target="" title=""></a>-->
