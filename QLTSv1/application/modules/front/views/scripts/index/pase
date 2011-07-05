@@ -1,0 +1,23 @@
+<!--<script type="text/javascript">
+    dojo.require("dojox.data.QueryReadStore");
+    dojo.require("dojox.grid.Grid");
+    dojo.require("dojo.parser");
+</script>
+<div dojoType="dojox.data.QueryReadStore" jsId="activeStore" url="/QLTSv1/front/index/records"></div>
+<div dojoType="dojox.grid.data.DojoData" jsId="model" rowsPerPage="20″ store="activeStore"></div>
+<table id="activePastes" dojoType="dojox.grid.Grid" model="model" style="height:300px; width:700px;">
+    <thead>
+        <tr>
+            <th field="ItemID">ItemID</th>
+            <th field="Ma_tai_san">Ma tai san</th>
+            <th field="Ten_tai_san">Ten tai san</th>
+            <th field="Description">Description</th>
+            <th field="Type">Type</th>
+            <th field="StartDate">StartDate</th>
+            <th field="Price">Price</th>
+            <th field="WarrantyTime">WarrantyTime</th>
+            <th field="Status">Status</th>
+            <th field="Place">Place</th>
+        </tr>
+    </thead>
+</table>-->

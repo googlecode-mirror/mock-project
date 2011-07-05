@@ -1,0 +1,65 @@
+<table border="1">
+    <tr>
+        <td>UserID</td>
+        <td><?php echo $this->member['UserID']; ?></td>
+    </tr>
+    <tr>
+        <td>Username</td>
+        <td><?php echo $this->member['Username']; ?></td>
+    </tr>
+    <tr>
+        <td>Password</td>
+        <td><?php echo $this->member['Password']; ?></td>
+    </tr>
+    <tr>
+        <td>Fullname</td>
+        <td><?php echo $this->member['FullName']; ?></td>
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td><?php echo $this->member['Email']; ?></td>
+    </tr>
+    <tr>
+        <td>Role</td>
+        <td><?php 
+        switch ($this->member['Role']) {
+                case 0: // Super Admin
+                    echo "SuperAdmin";
+                    break;
+                case 1: // Admin
+                    echo "Admin";
+                    break;
+                case 2: // IT
+                    echo "IT";
+                    break;
+                case 3 : // User
+                    echo "User";
+                    break;
+                default :
+                    echo "Not Set";
+                    break;;
+            }
+        
+        ?></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td><?php echo $this->member['Group']; ?></td>
+    </tr>
+    <tr>
+        <td>Phone</td>
+        <td><?php echo $this->member['Phone']; ?></td>
+    </tr>
+    <tr>
+        <td>Address</td>
+        <td><?php echo $this->member['Address']; ?></td>
+    </tr>
+</table>
+<br />
+<a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'edit', 'UserID' => $this->member['UserID'])); ?>">
+    Edit
+</a>
+<br />
+<a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'delete', 'UserID' => $this->member['UserID'])); ?>">
+    Delete
+</a>
