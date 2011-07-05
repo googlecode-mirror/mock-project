@@ -6,19 +6,19 @@ class Front_AuthController extends Zend_Controller_Action {
         /* Initialize action controller here */
     }
 
-    public function preDispatch() {
-        if (Zend_Auth::getInstance()->hasIdentity()) {
-            // logined
-            if ('login' == $this->getRequest()->getActionName()) {
-                $this->_helper->redirect('/index');
-            }
-        } else {
-            // not login
-            if ('login' != $this->getRequest()->getActionName()) {
-                $this->_helper->redirect('/auth/login');
-            }
-        }
-    }
+//    public function preDispatch() {
+//        if (Zend_Auth::getInstance()->hasIdentity()) {
+//            // logined
+//            if ('login' == $this->getRequest()->getActionName()) {
+//                $this->_helper->redirect('/index');
+//            }
+//        } else {
+//            // not login
+//            if ('login' != $this->getRequest()->getActionName()) {
+//                $this->_helper->redirect('/auth/login');
+//            }
+//        }
+//    }
 
     public function loginAction() {
         if (Zend_Auth::getInstance()->hasIdentity()) {
@@ -54,7 +54,7 @@ class Front_AuthController extends Zend_Controller_Action {
                         // login successfully
                         $this->_helper->getHelper('FlashMessenger')->addMessage('You were successfully logged in.');
                         //                        $this->_redirect('/user/' . Zend_Auth::getInstance()->getIdentity()->username);
-                        $this->_redirect('/auth/success');
+                        $this->_redirect('/front/auth/success');
                     }
                 }
             }
@@ -74,7 +74,16 @@ class Front_AuthController extends Zend_Controller_Action {
     public function logoutAction() {
         Zend_Auth::getInstance()->clearIdentity();
         Zend_Session::destroy();
-        $this->_redirect('/');
+        $this->_redirect('/front/auth/login');
+    }
+
+    public function nopermissionAction() {
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $this->view->showMessegers = TRUE;
+        } else {
+            $this->_helper->getHelper('FlashMessenger')->addMessage('Please login.');
+            $this->_redirect('/front/auth/login');
+        }
     }
 
     private function getAuthAdapter() {
