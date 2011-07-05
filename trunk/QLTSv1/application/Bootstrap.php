@@ -115,15 +115,18 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 //    protected function _iniView() {
 //
 //        // Get layout and view with config from application.ini
-//        $this->bootstrap('layout');
-//        $layout = $this->getResource('layout');
-//        $view = $layout->getView();
-//        Zend_Dojo::enableView($view);
-//        $view->doctype('HTML5');
-//        Zend_Debug::dump($view);
-//        $view->addHelperPath("ZendX/JQuery/View/Helper", "ZendX_JQuery_View_Helper");
-//        $view->addHelperPath('Zend/Dojo/View/Helper/', 'Zend_Dojo_View_Helper');
-//        Zend_Controller_Action_HelperBroker::addHelper(new Zend_Controller_Action_Helper_ViewRenderer($view));
+////        $this->bootstrap('layout');
+////        $layout = $this->getResource('layout');
+////        $view = $layout->getView();
+//        $view = new Zend_View();
+//        ZendX_JQuery::enableView($view);
+//        
+//        // Config jQuery
+//        $view->jQuery()->enable()
+//                ->setLocalPath($baseUrl . '/js/jquery/jquery-1.4.4.min.js')
+//                ->addJavascriptFile($baseUrl . '/js/realTime.js');
+//        //ZendX_JQuery_View_Helper_JQuery::enableNoConflictMode();
+//
 //        return $view;
 //    }
 

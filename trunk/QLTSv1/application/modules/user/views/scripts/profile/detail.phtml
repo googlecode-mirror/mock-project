@@ -1,0 +1,35 @@
+<table border="1">
+    <tr>
+        <td>Username</td>
+        <td><?php echo $this->member['Username']; ?></td>
+    </tr>
+    <tr>
+        <td>Password</td>
+        <td><?php echo $this->member['Password']; ?></td>
+    </tr>
+    <tr>
+        <td>Fullname</td>
+        <td><?php echo $this->member['FullName']; ?></td>
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td><?php echo $this->member['Email']; ?></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td><?php echo $this->member['Group']; ?></td>
+    </tr>
+    <tr>
+        <td>Phone</td>
+        <td><?php echo $this->member['Phone']; ?></td>
+    </tr>
+    <tr>
+        <td>Address</td>
+        <td><?php echo $this->member['Address']; ?></td>
+    </tr>
+</table>
+<br />
+<a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'profile', 'action' => 'edit', 'UserID' => $this->member['UserID'])); ?>">
+    Edit
+</a>
+
