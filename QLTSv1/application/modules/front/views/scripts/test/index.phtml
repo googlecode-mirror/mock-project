@@ -1,0 +1,83 @@
+
+
+<table id="jqGridTest"></table>
+
+<style type="text/css">
+
+.flexigrid div.fbutton .add { background: url(/eve/icons/small/plus.png) no-repeat center left; }
+.flexigrid div.fbutton .delete { background: url(/eve/icons/small/subtract.png) no-repeat center left; }
+.flexigrid div.fbutton .edit { background: url(/eve/icons/small/pencil.png) no-repeat center left; }
+
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+    function add_record() { window.location='/user/add'; }
+    
+    function delete_record(command,grid)
+    {
+        var record_count = $('.trSelected',grid).length;
+        if (0 == record_count)
+        {
+            alert('Please select a record first by clicking on the appropriate row.');
+            return;
+         }
+         $('.trSelected',grid).each(function(){
+             var id = this.id.substr(3);
+             window.location = '/user/delete/id/'+id;
+         });
+     } // delete_record
+
+     function edit_record(command,grid)
+     {
+         var record_count = $('.trSelected',grid).length;
+         if (0 == record_count)
+         {
+             alert('Select a record first by clicking on the appropriate row.');
+             return;
+         }
+         $('.trSelected',grid).each(function(){
+             var id = this.id.substr(3);
+             window.location = '/user/edit/id/'+id;
+         });
+     } // edit_record
+
+    $('#jqGirdTest').flexigrid({
+        url: 'http://localhost/QLTSv1/front/test/records',
+        dataType: "json",
+        buttons: [
+            {name: 'Add', bclass: 'add', onpress: add_record},
+            {name: 'Edit', bclass: 'edit', onpress: edit_record},
+            {name: 'Delete', bclass: 'delete', onpress: delete_record}
+        ],
+        colModel: [
+            {display: 'Ma_tai_san', name: 'Ma_tai_san', width: 30, sortable: true, align: 'left'},
+            {display: 'UserID', name: 'UserID', width: 30, sortable: true, align: 'left'},
+            {display: 'Detail', name: 'Detail', width: 150, sortable: false, align: 'left'},
+            {display: 'Date', name: 'Date', width: 30, sortable: true, align: 'left'}
+            
+//            {display: 'ItemID', name: 'ItemID', width: 30, sortable: true, align: 'left'},
+//            {display: 'Ma tai san', name: 'Ma_tai_san', width: 120, sortable: true, align: 'left'},
+//            {display: 'Ten tai san', name: 'Ten_tai_san', width: 150, sortable: true, align: 'left'},
+//            {display: 'Description', name: 'Description', width: 150, sortable: true, align: 'left'},
+//            {display: 'Ten tai san', name: 'Type', width: 150, sortable: true, align: 'left'},
+//            {display: 'Ten tai san', name: 'StartDate', width: 150, sortable: true, align: 'left'},
+//            {display: 'Ten tai san', name: 'Price', width: 150, sortable: true, align: 'left'},
+//            {display: 'Ten tai san', name: 'WarrantyTime', width: 150, sortable: true, align: 'left'},
+//            {display: 'Ten tai san', name: 'Status', width: 150, sortable: true, align: 'left'},
+//            {display: 'Ten tai san', name: 'Place', width: 150, sortable: true, align: 'left'}
+        ],
+        
+        sortname: "Ma_tai_san",
+	sortorder: "asc",
+	usepager: true,
+	title: 'Loan Table',
+	useRp: true,
+	rp: 10,
+//	showTableToggleBtn: true,
+	width: 700,
+//	onSubmit: addFormData,
+	height: 200
+     });
+});
+</script>
+
