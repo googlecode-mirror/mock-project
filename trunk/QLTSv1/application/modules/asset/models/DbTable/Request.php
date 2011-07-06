@@ -21,7 +21,8 @@
                     'Date'=>$Date,
                     'Accept'=>$Accept
                     );
-            if($this->insert($data)!=true){
+            if ($this->insert($data)!=true)
+            {
                return 0;                        //Thông tin yêu cầu nhập không hợp lệ
             }
             return 1;
@@ -77,7 +78,8 @@
         //Lay mot Request tu ID
         public function getRequestFromID($id){
             $row = $this->fetchRow('RequestID = ' . $this->_db->quote($id, 'INTEGER'));
-            if(!$row){
+            if (!$row)
+            {
                 return null;
             }
             return $row->toArray();
@@ -86,27 +88,34 @@
         //Lay cac Request theo yeu cau
          public function getRequestFromOthers($UserID, $Ma, $Type, $Accept, $StartDate, $EndDate){
             $sql = '1=1';
-           if($UserID!=null){
+            if ($UserID!=null)
+            {
                $sql = $sql. ' AND UserID = ' . $this->_db->quote($UserID, 'INTEGER');
             }
-            if($Ma!=null){
+            if ($Ma!=null)
+            {
                 $sql = $sql. ' AND Ma_tai_san = ' . $this->_db->quote($Ma);
             }
-            if($Type!=null){
+            if ($Type!=null)
+            {
                 $sql = $sql. ' AND Type = ' . $Type;
             }
-            if($Accept!=null){
+            if ($Accept!=null)
+            {
                 $sql = $sql. ' AND Accept = ' . $Accept;
             }
-            if($StartDate!=null){
+            if ($StartDate!=null)
+            {
                 $sql = $sql. ' AND Date >= ' . $StartDate;
             }
-            if($EndDate!=null){
+            if ($EndDate!=null)
+            {
                 $sql = $sql. ' AND Date <= ' . $EndDate;
             }
             $sql=$sql.';';
             $result = $this->fetchAll($this->select()->where($sql));
-            if(!$result){
+            if (!$result)
+            {
                 return null;
             }
             return $result;

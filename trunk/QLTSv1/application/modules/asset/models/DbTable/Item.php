@@ -8,6 +8,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  * 
  */
+	 require_once 'Zend/Db/Table/Abstract.php'; 
      class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract
     {
         protected $_name = 'iteminfor';     //Ten bang thao tac
@@ -25,7 +26,8 @@
                     'Status'=>$Status,
                     'Place'=>$Place
                     );
-             if($this->insert($data)!=true){
+             if ($this->insert($data)!=true)
+             {
                  return 0;                      //Thông tin nhập không hợp lệ
              }
              return 1;
@@ -45,7 +47,8 @@
         public function deleteItem($id){
              $id = (int) $id;
              $arr=$this->getItemFromID($id);
-             if($arr['Status']==1){
+             if ($arr['Status']==1)
+             {
                  return 0;                  //Lỗi item đang được cho mượn, không xóa được
              }
              $this->delete('id = ' .(int)$id);
@@ -65,7 +68,8 @@
                     'Status'=>$Status,
                     'Place'=>$Place
                     );
-             if($this->update($data,'id = ' .(int)$id)!=true){
+             if ($this->update($data,'id = ' .(int)$id)!=true)
+             {
                  return 0;                   //Thông tin sửa không hợp lệ
              }
              return 1;
@@ -74,7 +78,8 @@
         //Set thuoc tinh Ma theo ID
         public function setMa($id,$value){
              $data=array('Ma_tai_san'=>$value);
-             if($this->insert($data)!=true){
+             if ($this->insert($data)!=true)
+             {
                  return 0;
              }
              return 1;
@@ -142,39 +147,50 @@
         //Lay thong tin tai san tu cac thong tin khac
          public function getItemFromOthers($Ten, $Type, $Status, $Place, $StartPrice, $EndPrice, $StartTime, $EndTime,  $StartDate, $EndDate){
             $sql = '1=1';
-           if($Ten!=null){
+            if ($Ten!=null)
+            {
                $sql = $sql. ' AND Ten_tai_san LIKE %'.$Ten.'%';
             }
-            if($Type!=null){
+            if ($Type!=null)
+            {
                 $sql = $sql. ' AND Type = ' . $Type;
             }
-            if($Status!=null){
+            if ($Status!=null)
+            {
                 $sql = $sql. ' AND Status = ' . $Status;
             }
-            if($Place!=null){
+            if ($Place!=null)
+            {
                 $sql = $sql. ' AND Place LIKE %'.$Place.'%';
             }
-            if($StartPrice!=null){
+            if ($StartPrice!=null)
+            {
                 $sql = $sql. ' AND Price >= ' . $this->_db->quote($StartPrice, 'INTEGER');
             }
-            if($EndPrice!=null){
+            if ($EndPrice!=null)
+            {
                 $sql = $sql. ' AND Price <= ' . $this->_db->quote($EndPrice, 'INTEGER');
             }
-            if($StartTime!=null){
+            if ($StartTime!=null)
+            {
                 $sql = $sql. ' AND WarrantyTime >= ' . $this->_db->quote($StartTime, 'INTEGER');
             }
-            if($EndTime!=null){
+            if ($EndTime!=null)
+            {
                 $sql = $sql. ' AND WarrantyTime <= ' . $this->_db->quote($EndTime, 'INTEGER');
             }
-            if($StartDate!=null){
+            if ($StartDate!=null)
+            {
                 $sql = $sql. ' AND StartDate >= ' . $StartDate;
             }
-            if($EndDate!=null){
+            if ($EndDate!=null)
+            {
                 $sql = $sql. ' AND StartDate <= ' . $EndDate;
             }
             $sql=$sql.';';
             $result = $this->fetchAll($this->select()->where($sql));
-            if(!$result){
+            if (!$result)
+            {
                 return null;
             }
             return $result;
