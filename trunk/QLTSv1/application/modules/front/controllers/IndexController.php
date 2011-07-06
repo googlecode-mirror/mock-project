@@ -24,4 +24,8 @@ class Front_IndexController extends Zend_Controller_Action {
         echo "Hello world <br />";
     }
 
+    public function aboutAction() {
+        
+    }
+
 }

@@ -3,7 +3,7 @@
 class Front_AuthController extends Zend_Controller_Action {
 
     public function init() {
-        /* Initialize action controller here */
+        
     }
 
 //    public function preDispatch() {
@@ -21,16 +21,21 @@ class Front_AuthController extends Zend_Controller_Action {
 //    }
 
     public function loginAction() {
+        $this->_helper->layout->setLayout('login');
+//        $this->_helper->layout->disableLayout();
         if (Zend_Auth::getInstance()->hasIdentity()) {
             $this->_redirect('/index');
         }
-        $form = new Front_Form_Login();
+//        $form = new Front_Form_Login();
         if ($this->_request->isPost()) {
 
-            if ($form->isValid($this->_request->getPost())) {
-                $uname = $form->getValue('username');
-                $passwd = $form->getValue('password');
-
+//            if ($form->isValid($this->_request->getPost())) {
+//            
+//                $uname = $form->getValue('username');
+//                $passwd = $form->getValue('password');
+            if (isset($_POST['txtUsername']) && isset($_POST['txtPassword'])) {
+                $uname = $_POST['txtUsername'];
+                $passwd = $_POST['txtPassword'];
                 $authAdapter = $this->getAuthAdapter();
                 $authAdapter->setIdentity($uname)
                         ->setCredential($this->encodePassword($passwd));
@@ -59,8 +64,8 @@ class Front_AuthController extends Zend_Controller_Action {
                 }
             }
         }
-        $this->view->form = $form;
-        $this->view->messages = $form->getMessages();
+//        $this->view->form = $form;
+//        $this->view->messages = $form->getMessages();
     }
 
     public function successAction() {

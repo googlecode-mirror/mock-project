@@ -1,0 +1,66 @@
+<?php
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+?>
+<div id="navleft">
+    <div class="navleft">Home</div>
+    <?php
+    if ($this->userInfo != NULL) {
+        switch ($this->userInfo->Role) {
+            case 0: // Super Admin
+                ?>
+                <ul>
+                    <li><a href="#">Quản lý yêu cầu</a></li>
+                    <li><a href="#">Quản lý tài khoản</a></li>
+                    <li><a href="#">Tài sản đang mượn</a></li>
+                    <li><a href="#">Yêu cầu tài sản</a></li>
+                </ul>
+                <?php
+                break;
+            case 1: // Admin
+                ?>
+                <ul>
+                    <li><a href="#">Quản lý yêu cầu</a></li>
+                    <li><a href="#">Quản lý tài khoản</a></li>
+                    <li><a href="#">Tài sản đang mượn</a></li>
+                    <li><a href="#">Yêu cầu tài sản</a></li>
+                </ul>
+                <?php
+                break;
+            case 2: // User
+                ?>
+                <ul>
+                    <li><a href="#">Quản lý yêu cầu</a></li>
+                    <li><a href="#">Quản lý tài khoản</a></li>
+                    <li><a href="#">Tài sản đang mượn</a></li>
+                    <li><a href="#">Yêu cầu tài sản</a></li>
+                </ul>
+                <?php
+                break;
+            case 3: // IT
+                ?>
+                <ul>
+                    <li><a href="#">Quản lý yêu cầu</a></li>
+                    <li><a href="#">Quản lý tài khoản</a></li>
+                    <li><a href="#">Tài sản đang mượn</a></li>
+                    <li><a href="#">Yêu cầu tài sản</a></li>
+                </ul>
+                <?php
+                break;
+            default : // Other
+                ?>
+                <ul>
+                    <li><a href="#">Quản lý yêu cầu</a></li>
+                    <li><a href="#">Quản lý tài khoản</a></li>
+                    <li><a href="#">Tài sản đang mượn</a></li>
+                    <li><a href="#">Yêu cầu tài sản</a></li>
+                </ul>
+                <?php
+                break;
+        }
+    }
+    ?>
+
+</div>

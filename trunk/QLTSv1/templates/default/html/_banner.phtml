@@ -1,0 +1,33 @@
+<table id="banner" cellpadding="0" cellspacing="0" border="0">
+    <tbody>
+        <tr>
+            <td>
+                <div class="mauser">
+                    Welcome 
+                    <?php if ($this->userInfo != NULL) { ?>
+                        <span style="font-weight:bold"><?php echo $this->userInfo->FullName; ?></span>,
+                        <span style="color:#333333">
+                            [ <a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'profile', 'action' => 'detail', 'UserID' => $this->userInfo->UserID)); ?>">Profile</a> , 
+                            <a href="<?php echo $this->url(array('module' => 'front', 'controller' => 'auth', 'action' => 'logout')); ?>">Logout</a> ]
+                        </span>
+                    <?php } else { ?>
+                        <span style="font-weight:bold"><?php echo " Guest"; ?></span>,
+                        <span style="color:#333333">
+                            [ <a href="<?php echo $this->url(array('module' => 'front', 'controller' => 'auth', 'action' => 'login')); ?>">Login</a> ]
+                        </span>
+                    <?php } ?>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h2 style="font-size:260%;font-weight:bold;color:#fff;padding-left:60px">Quản lý tài sản</h2>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span style="color:#fff;padding-left:250px;">Developed by HEDSPI-INTERNSHIP2011-Group 01</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
