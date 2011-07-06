@@ -20,7 +20,8 @@
                     'Detail'=>$Detail,
                     'Date'=>$Date
                     );
-            if($this->insert($data)!=true){
+            if ($this->insert($data)!=true)
+            {
                 return 0;                           //Dữ liệu nhập không hợp lệ
             }
             return 1;
@@ -33,7 +34,8 @@
                     'Detail'=>$Detail,
                     'Date'=>$Date,
                     );
-            if($this->update($data,'Ma_tai_san = ' . $this->_db->quote($Ma))!=true){
+            if ($this->update($data,'Ma_tai_san = ' . $this->_db->quote($Ma))!=true)
+            {
                 return 0;                           //Dữ liệu sửa không hợp lệ
             }
             return 1;
@@ -63,7 +65,8 @@
         //Get du lieu theo ItemID
         public function getLoanFromMa($Ma){
             $row=$this->fetchAll('Ma_tai_san = ' . $this->_db->quote($Ma));
-            if(!$row) {
+            if (!$row)
+            {
                 throw new Exception("Không tìm thấy tài sản đang được mượn theo yêu cầu");
             }
             return $row->toArray();
@@ -72,31 +75,38 @@
         //Get du lieu theo cac yeu to khac
         public function getLoanFromOthers($UserID, $StartDate, $EndDate) {
             $sql = '1=1';
-            if($UserID!=null){
+            if ($UserID!=null)
+            {
                 $sql = $sql. ' AND UserID = ' . $this->_db->quote($UserID, 'INTEGER');
             }
-            if($StartDate!=null){
+            if ($StartDate!=null)
+            {
                 $sql = $sql. ' AND Date >= ' . $StartDate;
             }
-            if($EndDate!=null){
+            if ($EndDate!=null)
+            {
                 $sql = $sql. ' AND Date <= ' . $EndDate;
             }
             $sql=$sql.';';
             $result = $this->fetchAll($this->select()->where(sql));
-            if(!$result){
+            if (!$result)
+            {
                 return null;
             }
             return $result;
         }
         public function getLoanFromUsername($Name, $StartDate, $EndDate){
             $sql = '1=1';
-            if($Name!=null){
+            if ($Name!=null)
+            {
                 $sql = $sql. ' AND m.Username LIKE %'.$Name.'%';
             }
-            if($StartDate!=null){
+            if ($StartDate!=null)
+            {
                 $sql = $sql. ' AND loaninfor.Date >= ' . $StartDate;
             }
-            if($EndDate!=null){
+            if ($EndDate!=null)
+            {
                 $sql = $sql. ' AND loaninfor.Date <= ' . $EndDate;
             }
             $sql=$sql.';';
@@ -104,7 +114,8 @@
                          ->setIntegrityCheck(false);
             $result = $this->fetchAll($select->join('memberinfor as m','m.UserID = loaninfor.UserID','Username')
                                              ->where($sql));
-            if(!$result){
+            if (!$result)
+            {
                 return null;
             }
             return $result;

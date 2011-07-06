@@ -70,7 +70,8 @@
         //Lay mot ban Upgrade theo ID
         public function getUpgradeFromID($id){
             $row = $this->fetchRow('UpgradeID = ' . $this->_db->quote($id, 'INTEGER'));
-            if(!$row){
+            if (!$row)
+            {
                 return null;
             }
             return $row->toArray();
@@ -79,24 +80,30 @@
         //Lay cac ban Upgrade theo cac yeu to khac
         public function getUpgradeFromOthers($UserID, $ManagerID, $ItemID, $StartDate, $EndDate){
             $sql = '1=1';
-            if($UserID!=null){
+            if ($UserID!=null)
+            {
                 $sql = $sql. ' AND UserID = ' . $this->_db->quote($UserID, 'INTEGER');
             }
-            if($ManagerID!=null){
+            if ($ManagerID!=null)
+            {
                 $sql = $sql. ' AND ManagerID = ' . $this->_db->quote($ManagerID, 'INTEGER');
             }
-            if($ItemID!=null){
+            if ($ItemID!=null)
+            {
                 $sql = $sql. ' AND ItemID = ' . $this->_db->quote($ItemID, 'INTEGER');
             }
-            if($StartDate!=null){
+            if ($StartDate!=null)
+            {
                 $sql = $sql. ' AND Date >= ' . $StartDate;
             }
-            if($EndDate!=null){
+            if ($EndDate!=null)
+            {
                 $sql = $sql. ' AND Date <= ' . $EndDate;
             }
             $sql=$sql.';';
             $result = $this->fetchAll($this->select()->where($sql));
-            if(!$result){
+            if (!$result)
+            {
                 return null;
             }
             return $result;

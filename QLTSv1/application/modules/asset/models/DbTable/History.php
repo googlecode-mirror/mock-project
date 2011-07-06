@@ -79,24 +79,30 @@
         //Lay cac History tu cac thong so khac
         public function getHistoryFromOthers($LUserID, $RUserID, $ItemID, $StartDate, $EndDate){
             $sql = '1=1';
-            if($LUserID!=null){
+            if ($LUserID!=null)
+            {
                 $sql = $sql. ' AND LUserID = ' . $this->_db->quote($LUserID, 'INTEGER');
             }
-            if($RUserID!=null){
+            if ($RUserID!=null)
+            {
                 $sql = $sql. ' AND RUserID = ' . $this->_db->quote($RUserID, 'INTEGER');
             }
-            if($ItemID!=null){
+            if ($ItemID!=null)
+            {
                 $sql = $sql. ' AND ItemID = ' . $this->_db->quote($ItemID, 'INTEGER');
             }
-            if($StartDate!=null){
+            if ($StartDate!=null)
+            {
                 $sql = $sql. ' AND Date >= ' . $StartDate;
             }
-            if($EndDate!=null){
+            if ($EndDate!=null)
+            {
                 $sql = $sql. ' AND Date <= ' . $EndDate;
             }
             $sql=$sql.';';
             $result = $this->fetchAll($this->select()->where($sql));
-            if(!$result){
+            if (!$result)
+            {
                 return null;
             }
             return $result;
