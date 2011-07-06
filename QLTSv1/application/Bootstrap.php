@@ -30,7 +30,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $defaultModuleLoader = new Zend_Application_Module_Autoloader(array(
                     'namespace' => 'Front_',
                     'basePath' => APPLICATION_PATH . '/modules/front'));
-           
         return $defaultModuleLoader;
     }
 
@@ -114,20 +113,20 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
      */
 //    protected function _iniView() {
 //
-//        // Get layout and view with config from application.ini
-////        $this->bootstrap('layout');
-////        $layout = $this->getResource('layout');
-////        $view = $layout->getView();
-//        $view = new Zend_View();
-//        ZendX_JQuery::enableView($view);
-//        
-//        // Config jQuery
-//        $view->jQuery()->enable()
-//                ->setLocalPath($baseUrl . '/js/jquery/jquery-1.4.4.min.js')
-//                ->addJavascriptFile($baseUrl . '/js/realTime.js');
-//        //ZendX_JQuery_View_Helper_JQuery::enableNoConflictMode();
+//        $templatePath = APPLICATION_PATH . '/templates/' . TEMPLATE_NAME;
 //
-//        return $view;
+//        $layout = Zend_Layout::startMvc()->setLayout('layout', TRUE)->setLayoutPath($templatePath)->setContentKey('content');
+//        
+//        $view = new Zend_View ();
+//        $view->setBasePath($templatePath);
+////        $view->setScriptPath(APPLICATION_PATH);
+//        $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
+//
+//        $viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer ();
+//        $viewRenderer->setView($view);
+//
+//        Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
+//        return $this;
 //    }
 
 }

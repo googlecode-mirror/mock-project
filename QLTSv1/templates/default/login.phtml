@@ -1,0 +1,67 @@
+<?php
+/**
+ * File layout.phtml
+ * 
+ * @versoin 1.0
+ * @author OanhNN
+ * 
+ * @todo layout of application
+ */
+// Set encoding
+$this->setEncoding('UTF-8');
+
+// Set doctype
+$this->doctype('XHTML1_STRICT');
+
+// Set meta
+$this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8');
+$this->headMeta()->appendHttpEquiv('Content-Language', 'vi-VN');
+
+// Set title
+$this->headTitle()->append($this->translate('PAGE_TITLE'));
+$this->headTitle()->setSeparator(' :: ');
+$this->headTitle()->append($this->pagetitle);
+
+// Set favicon
+$this->headLink(array('rel' => 'shortcut icon', 'href' => 'favicon.ico', 'type' => 'image/x-icon'), 'apend');
+
+// Get baseUrl
+$templateUrl = $this->baseUrl() . '/templates/default/';
+
+
+// Set css style
+$this->headLink()->prependStylesheet($templateUrl . 'css/style.css', 'screen');
+// fix css for IE8 or LOWER
+$this->headLink()->prependStylesheet($templateUrl . 'css/style-ie8.css', 'screen', 'lte IE 8');
+
+// Set js script
+$this->headScript()->prependFile($this->baseUrl() . '/lib/jquery-ui-1.8.14/js/jquery-1.5.1.min.js');
+
+$this->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
+
+//$this->addHelperPath('Ingot/JQuery/JqGrid/View/Helper','Ingot_JQuery_JqGrid_View_Helper');
+$viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer ();
+$viewRenderer->setView($this);
+?>
+<?php echo $this->doctype() . PHP_EOL; ?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <?php
+        echo $this->headMeta() . PHP_EOL;
+        echo $this->headTitle() . PHP_EOL;
+        echo $this->headLink() . PHP_EOL;
+        echo $this->headStyle() . PHP_EOL;
+        echo $this->headScript() . PHP_EOL;
+//        if ($this->jQuery()->isEnabled()) {
+//            echo $this->jQuery() . PHP_EOL;
+//        }
+//        if ($this->dojo()->isEnabled()) {
+//            echo $this->dojo() . PHP_EOL;
+//        }
+//        echo $this->headScript();
+        ?>
+    </head>
+    <body id="login">
+        <?php echo $this->layout()->content; ?>
+    </body>
+</html>

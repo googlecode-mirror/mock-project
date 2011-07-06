@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>INTERSHIP</title>
+<meta name="keywords" content="Human resources management"/>
+<meta name="description" content="Human resources management"/>
+<link href="../images/styles/reset1.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="../images/styles/global.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="../images/styles/sIFR-screen.css" rel="stylesheet" media="screen" type="text/css" />
+</head>
+
+<body id="login">
+<table width="100%">
+<tbody>
+	<tr>
+    <td height="100%">
+    <div align="center">
+        <div class="log">
+            <div id="textbox">
+				<script type="text/javascript">
+                 <!--
+                     if (document.getElementById('txtkeyword').value!='')
+                     document.getElementById('qs_txt').value=document.getElementById('txtkeyword').value;
+                 -->
+                </script>
+
+                <form class="txt" id="txt" action="home.html" method="post">
+              <p>
+              	<input type="hidden" name="act" value="general"/>
+                <input class="qs_txt" id="txtUsername" name="txtUsername" type="text" 
+                onblur="if (this.value=='') this.value='Usename';" 
+                onkeyup="document.getElementById('txtUsername1').value=this.value;" 
+                onfocus="this.value=document.getElementById('txtUsername1').value;" 
+                value="Usename"/>
+                <input id="txtUsername1" type="hidden" value="" name="txtUsername1"/>
+              </p>
+              <p>
+              	<input type="hidden" name="act" value="general"/>
+                <input class="qs_txt" id="txtPassword" name="txtPassword" type="password" 
+                onblur="if (this.value=='') this.value='Password';" 
+                onkeyup="document.getElementById('txtPassword1').value=this.value;" 
+                onfocus="this.value=document.getElementById('txtPassword1').value;" 
+                value="Password"/>
+                <input id="txtPassword1" type="hidden" value="" name="txtUsername1"/>
+              </p>
+              <br/>
+              <br/>
+              <p>
+                <input type="image" onmouseover="this.src='../images/assets/btn_submit_hover.png';" onmouseout="this.src='../images/assets/btn_submit.png';"  style="border: medium none ;" src="../images/assets/btn_submit.png" alt="Submit" title="Submit"/>
+              </p>
+                 </form>
+             </div>
+        </div>
+        <p style="color:#fff">
+        	GROUP 01 © HEDSPI-INTERNSHIP2011.
+        </p>
+    </div>
+    </td>
+    </tr>
+</tbody>
+</table>    
+</body>
+</html>
