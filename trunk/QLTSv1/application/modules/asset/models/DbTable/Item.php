@@ -19,7 +19,7 @@
                     'Ma_tai_san'=>$Ma,
                     'Ten_tai_san'=>$Ten,
                     'Description'=>$Description,
-                    'Type'=>Type,
+                    'Type'=>$Type,
                     'StartDate'=>$StartDate,
                     'Price'=>$Price,
                     'WarrantyTime'=>$WarrantyTime,
@@ -137,7 +137,7 @@
 
         //Lay thong tin tai san theo Ma
         public function getItemFromMa($Ma){
-             $row = $this->fetchRow('Ma_tai_san = ' . $this->_db->quote($Ma));
+             $row = $this->fetchRow("Ma_tai_san = '" . $this->_db->quote($Ma) . "'");
              if (!$row) {
                return null;
             }
