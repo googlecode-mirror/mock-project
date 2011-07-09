@@ -7,20 +7,26 @@ class User_ProfileController extends Zend_Controller_Action {
     }
 
     public function detailAction() {
-        // get UserID from param
-        $UserID = $this->_getParam('UserID', -1);
-        if ($UserID == Zend_Auth::getInstance()->getIdentity()->UserID) {
-            include_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
-            $member = new User_Model_DbTable_Member();
-            $this->view->member = $member->getMember($UserID);
+
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $userInfo = Zend_Auth::getInstance()->getIdentity();
         } else {
             $this->_helper->getHelper('FlashMessenger')->addMessage("You haven't permission.");
-//            $this->_redirect('/user/' . Zend_Auth::getInstance()->getIdentity()->username);
             $this->_redirect('/front/auth/nopermission');
         }
+        include_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
+        $member = new User_Model_DbTable_Member();
+        $this->view->member = $member->getMember($userInfo->UserID);
     }
 
     public function editAction() {
+
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $userInfo = Zend_Auth::getInstance()->getIdentity();
+        } else {
+            $this->_helper->getHelper('FlashMessenger')->addMessage("You haven't permission.");
+            $this->_redirect('/front/auth/nopermission');
+        }
         include_once APPLICATION_PATH . '/modules/user/forms/Profile.php';
         $form = new User_Form_Profile;
         //$form->submit->setLabel('Save');
@@ -30,9 +36,13 @@ class User_ProfileController extends Zend_Controller_Action {
             $formData = $this->getRequest()->getPost();
             if ($form->isValid($formData)) {
                 $UserID = (int) $form->getValue('UserID');
+                if ($UserID != $userInfo->UserID) {
+                    $this->_helper->getHelper('FlashMessenger')->addMessage("You haven't permission.");
+                    $this->_redirect('/front/auth/nopermission');
+                }
                 $username = $form->getValue('Username');
                 $password = $form->getValue('Password');
-                $role = $form->getValue('Role');
+                $role = $userInfo->Role;
                 $fullname = $form->getValue('FullName');
                 $email = $form->getValue('Email');
                 $group = $form->getValue('Group');
@@ -55,15 +65,8 @@ class User_ProfileController extends Zend_Controller_Action {
                 $form->populate($formData);
             }
         } else {
-            $UserID = (int) $this->_getParam('UserID', -1);
-            if ($UserID == Zend_Auth::getInstance()->getIdentity()->UserID) {
-                $member = new User_Model_DbTable_Member();
-                $form->populate($member->getMember($UserID));
-            } else {
-                $this->_helper->getHelper('FlashMessenger')->addMessage("You haven't permission.");
-//                $this->_redirect('/user/' . Zend_Auth::getInstance()->getIdentity()->username);
-                $this->_redirect('/front/auth/nopermission');
-            }
+            $member = new User_Model_DbTable_Member();
+            $form->populate($member->getMember($userInfo->UserID));
         }
     }
 
