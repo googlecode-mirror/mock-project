@@ -65,7 +65,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 //
 //        return $front;
 //    }
-
 //    /**
 //     * function _initLocale()
 //     * 
@@ -109,24 +108,46 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
      * 
      * @todo Initialization config for view and layout
      * @param null
-     * @return Zend_View
+     * @return mix
      */
-//    protected function _iniView() {
-//
-//        $templatePath = APPLICATION_PATH . '/templates/' . TEMPLATE_NAME;
-//
-//        $layout = Zend_Layout::startMvc()->setLayout('layout', TRUE)->setLayoutPath($templatePath)->setContentKey('content');
-//        
-//        $view = new Zend_View ();
-//        $view->setBasePath($templatePath);
-////        $view->setScriptPath(APPLICATION_PATH);
-//        $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
-//
-//        $viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer ();
-//        $viewRenderer->setView($view);
-//
-//        Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
-//        return $this;
-//    }
+    protected function _initView() {
+
+        $this->bootstrap('layout');
+        $layout = $this->getResource('layout');
+//        // Or use
+//        $templatePath = APPLICATION_PATH . '/../templates/' . TEMPLATE_NAME;
+//        $layout = Zend_Layout::startMvc()->setLayout('layout')->setLayoutPath($templatePath)->setContentKey('content');
+
+        $view = $layout->getView();
+        $baseUrl = $view->baseUrl();
+        $view->templateUrl = $baseUrl . '/templates/' . TEMPLATE_NAME . '/';
+
+        $view->setEncoding('UTF-8');
+        $view->doctype('XHTML1_STRICT');
+        $view->headMeta()
+                ->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8');
+
+        // Set favicon
+        $view->headLink(array('rel' => 'shortcut icon', 'href' => $baseUrl . '/favicon.ico', 'type' => 'image/x-icon'), 'append');
+
+        // Set css style
+        $view->headLink()->appendStylesheet($view->templateUrl . 'css/style.css', 'screen');
+
+        // fix css for IE8 or LOWER
+        $view->headLink()->appendStylesheet($view->templateUrl . 'css/style-ie8.css', 'screen', 'lte IE 8');
+
+        // Set js script
+        //$view->headScript()->prependFile($baseUrl . 'js/custom.js');
+
+        ZendX_JQuery::enableView($view);
+//        // Or use
+//        $view->addHelperPath("ZendX/JQuery/View/Helper", "ZendX_JQuery_View_Helper");
+//        Zend_Controller_Action_HelperBroker::addHelper(new Zend_Controller_Action_Helper_ViewRenderer($view));
+
+        $view->jQuery()->setLocalPath($baseUrl . '/lib/jquery-1.5.2.min.js')
+                ->disable();
+
+        return $this;
+    }
 
 }

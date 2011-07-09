@@ -1,0 +1,59 @@
+<?php
+$this->jQuery()->enable();
+$this->headLink()
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
+$this->headScript()
+        ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+?>
+
+<table class='gridTable' style="display:none"></table>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        
+        $('.gridTable').flexigrid({
+            url : '/QLTSv1/asset/history/records',
+            dataType : 'json',
+            colModel : [ 
+//                {display: 'Item ID', name: 'ItemID', width: 50, sortable: true, align: 'left'},
+                {display: 'ItemID', name: 'ItemID', width: 70, sortable: true, align: 'left'},
+                {display: 'Nguoi ban giao', name: 'LUserID', width: 100, sortable: true, align: 'left'},
+                {display: 'Nguoi nhan', name: '', width: 300, sortable: true, align: 'left'},
+                {display: 'Date', name: 'Type', width: 50, sortable: true, align: 'left'},
+                {display: 'Detail', name: 'StartDate', width: 70, sortable: false, align: 'left'},
+            ],
+            buttons : [ 
+                {name : 'Detail', bclass : 'detail', onpress : detail_record}
+            ],
+            searchitems : [ 
+                {display : 'ItemID', name : 'ItemID', isdefault : true },
+                {display : 'Date', name : 'Date' },
+                {display : 'Nguoi ban giao', name : 'LUserID' },
+                {display : 'Nguoi nhan', name : 'RUserID' },
+            ],
+            sortname : "ItemID",
+            sortorder : "asc",
+            usepager : true,
+            title : 'Item Table',
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 1080,
+            height : 250
+        });
+
+        function detail_record(command,grid){
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                window.location = '/QLTSv1/asset/item/detail/ItemID/'+id;
+            });
+        } // detail_record
+    });
+</script>

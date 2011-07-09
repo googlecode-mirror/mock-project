@@ -1,26 +1,102 @@
-<a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'add')); ?>">Add new user</a>
-<br />
-<table>
-    <tr>
-        <th>Username</th>
-        <th>Fullname</th>
-        <th>Role</th>
-        <th>Group</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-    </tr>
-    <?php foreach ($this->members as $member): ?>
-    <tr>
-        <td><?php echo $this->escape($member->Username); ?></td>
-        <td><?php echo $this->escape($member->FullName); ?></td>
-        <td><?php echo $this->escape($member->Role); ?></td>
-        <td><?php echo $this->escape($member->Group); ?></td>
-        <td><a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'detail', 'UserID' => $member->UserID)); ?>">Detail</a></td>
-        <td><a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'edit', 'UserID' => $member->UserID)); ?>">Edit</a></td>
-        <td><a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'delete', 'UserID' => $member->UserID)); ?>">Delete</a></td>
-    </tr>
-    <?php endforeach;?>
-</table>
+<?php
+/**
+ * View script of list action
+ * 
+ * @package Application/module/user/controller/user
+ * @version 1.0
+ * @author OanhNN
+ */
 
-<!--<a href="" target="" title=""></a>-->
+$this->jQuery()->enable();
+$this->headLink()
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
+$this->headScript()
+        ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+?>
+
+<table class='tableMembers' style="display:none"></table>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        
+        $('.tableMembers').flexigrid({
+            url : '/QLTSv1/user/user/records',
+            dataType : 'json',
+            colModel : [ 
+                {display: 'Username', name: 'Username', width: 80, sortable: true, align: 'left'},
+                {display: 'Full Name', name: 'FullName', width: 120, sortable: true, align: 'left'},
+                {display: 'Role', name: 'Role', width: 50, sortable: false, align: 'left'},
+                {display: 'Email', name: 'Email', width: 120, sortable: true, align: 'left'},
+                {display: 'Birthday', name: 'Birthday', width: 70, sortable: true, align: 'left'},
+                {display: 'Group', name: 'Group', width: 70, sortable: true, align: 'left'},
+                {display: 'Phone No.', name: 'Phone', width: 70, sortable: true, align: 'left'},
+                {display: 'Address', name: 'Address', width: 300, sortable: true, align: 'left'}
+            ],
+            buttons : [ 
+                {name : 'Add', bclass : 'add', onpress : add_record},
+                {name : 'Edit', bclass : 'edit', opress : edit_record},
+                {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
+                {separator : true},
+                {name : 'Detail', bclass : 'detail', onpress : detail_record}
+            ],
+            searchitems : [ 
+                {display : 'Username', name : 'Username', isdefault : true },
+                {display : 'Name', name : 'FullName' },
+                {display : 'Email', name : 'Email' }
+            ],
+            sortname : "Username",
+            sortorder : "asc",
+            usepager : true,
+            title : 'Members Table',
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 1000,
+            height : 250
+        });
+        
+        function add_record() { window.location='/QLTSv1/user/user/add'; }
+    
+        function delete_record(command,grid)
+        {
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Please select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                window.location = '/QLTSv1/user/user/delete/UserID/'+id;
+            });
+        } // delete_record
+
+        function edit_record(command,grid)
+        {
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                window.location = '/QLTSv1/user/user/edit/UserID/'+id;
+            });
+        } // edit_record
+        
+        function detail_record(command,grid){
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                window.location = '/QLTSv1/user/user/detail/UserID/'+id;
+            });
+        } // detail_record
+    });
+</script>

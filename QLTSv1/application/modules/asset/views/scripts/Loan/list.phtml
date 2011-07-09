@@ -1,0 +1,69 @@
+<?php
+/**
+ * View script of list action
+ * 
+ * @package Application/module/asset/controller/loan
+ * @version 1.0
+ * @author OanhNN
+ */
+$this->jQuery()->enable();
+$this->headLink()
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
+$this->headScript()
+        ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+?>
+
+<table class='gridTable' style="display:none"></table>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        
+        $('.gridTable').flexigrid({
+            url : '/QLTSv1/asset/loan/records',
+            dataType : 'json',
+            colModel : [ 
+//                {display: 'Item ID', name: 'ItemID', width: 50, sortable: true, align: 'left'},
+                {display: 'Ma tai san', name: 'Ma_tai_san', width: 100, sortable: true, align: 'left'},
+                {display: 'User ID', name: 'UserID', width: 100, sortable: false, align: 'left'},
+                {display: 'Detail', name: 'Detail', width: 350, sortable: true, align: 'left'},
+                {display: 'Date', name: 'Date', width: 100, sortable: true, align: 'left'},
+            ],
+            buttons : [ 
+                {name : 'Add', bclass : 'add', onpress : add_record},
+                {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
+                {separator : true},
+            ],
+            searchitems : [ 
+                {display : 'Ma tai san', name : 'Ma_tai_san', isdefault : true },
+                {display : 'User ID', name : 'UserID' },
+                {display : 'Date', name : 'Date' },
+            ],
+            sortname : "UserID",
+            sortorder : "asc",
+            usepager : true,
+            title : 'Loan Table',
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 1080,
+            height : 250
+        });
+        
+        function add_record() { window.location='/QLTSv1/asset/loan/add'; }
+    
+        function delete_record(command,grid)
+        {
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Please select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                window.location = '/QLTSv1/asset/loan/delete/ItemID/'+id;
+            });
+        } // delete_record
+    });
+</script>

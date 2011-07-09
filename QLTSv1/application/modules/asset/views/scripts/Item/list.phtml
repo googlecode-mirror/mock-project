@@ -1,0 +1,118 @@
+<?php
+$this->jQuery()->enable();
+$this->headLink()
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
+$this->headScript()
+        ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+
+switch ($this->mode) {
+    case 1:
+        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 1));
+        break;
+    case 2:
+        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 2));
+        break;
+    case 3:
+        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 3));
+        break;
+    case 4:
+        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 4));
+        break;
+    default :
+        // othermode
+        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 1));
+        break;
+}
+?>
+
+<table class='gridTable' style="display:none"></table>
+
+<script type="text/javascript">
+    <!--
+    $(document).ready(function(){
+        
+        $('.gridTable').flexigrid({
+            url : '<?php echo $urlRecords; ?>',
+            dataType : 'json',
+            colModel : [ 
+                //                {display: 'Item ID', name: 'ItemID', width: 50, sortable: true, align: 'left'},
+                {display: 'Ma tai san', name: 'Ma_tai_san', width: 70, sortable: true, align: 'left'},
+                {display: 'Ten tai san', name: 'Ten_tai_san', width: 100, sortable: false, align: 'left'},
+                {display: 'Description', name: 'Description', width: 300, sortable: true, align: 'left'},
+                {display: 'Type', name: 'Type', width: 50, sortable: true, align: 'left'},
+                {display: 'Start Date', name: 'StartDate', width: 70, sortable: true, align: 'left'},
+                {display: 'Price', name: 'Price', width: 70, sortable: true, align: 'left'},
+                {display: 'Warranty Time', name: 'WarrantyTime', width: 80, sortable: true, align: 'left'},
+                {display: 'Status', name: 'Status', width: 50, sortable: true, align: 'left'},
+                {display: 'Place', name: 'Place', width: 100, sortable: true, align: 'left'}
+            ],
+            buttons : [ 
+                {name : 'Add', bclass : 'add', onpress : add_record},
+                {name : 'Edit', bclass : 'edit', opress : edit_record},
+                {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
+                {separator : true},
+                {name : 'Detail', bclass : 'detail', onpress : detail_record}
+            ],
+            searchitems : [ 
+                {display : 'Ma tai san', name : 'Ma_tai_san', isdefault : true },
+                {display : 'Ten tai san', name : 'Ten_tai_san' },
+                //                {display : 'Item ID', name : 'ItemID' },
+                {display : 'Type', name : 'Type' },
+            ],
+            sortname : "ItemID",
+            sortorder : "asc",
+            usepager : true,
+            title : 'Item Table',
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 1080,
+            height : 250
+        });
+        
+        function add_record() { window.location='/QLTSv1/asset/item/add'; }
+    
+        function delete_record(command,grid)
+        {
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Please select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                window.location = '/QLTSv1/asset/item/delete/ItemID/'+id;
+            });
+        } // delete_record
+
+        function edit_record(command,grid)
+        {
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                window.location = '/QLTSv1/asset/item/detail/ItemID/'+id;
+            });
+        } // edit_record
+        
+        function detail_record(command,grid){
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                window.location = '/QLTSv1/asset/item/detail/ItemID/'+id;
+            });
+        } // detail_record
+    });
+    -->
+</script>

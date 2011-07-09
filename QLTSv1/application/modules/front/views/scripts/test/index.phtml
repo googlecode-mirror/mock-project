@@ -1,7 +1,56 @@
-<table id="jqGridTest" style="display:none"></table>
+<?php
+$this->jQuery()->enable();
+$this->headLink()
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
+$this->headScript()
+        ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+?>
+
+<table class='Oanhnn' style="display:none"></table>
 
 <script type="text/javascript">
+    <!--
     $(document).ready(function(){
+        
+        $('.Oanhnn').flexigrid({
+            url : '/QLTSv1/front/test/records',
+            dataType : 'json',
+            colModel : [ 
+                {display: 'Ma tai san', name: 'Ma_tai_san', width: 60, sortable: true, align: 'left'},
+                {display: 'UserID', name: 'UserID', width: 50, sortable: true, align: 'left'},
+                {display: 'Detail', name: 'Detail', width: 350, sortable: false, align: 'left'},
+                {display: 'Date', name: 'Date', width: 70, sortable: true, align: 'left'}
+            ],
+            buttons : [ 
+                {name : 'Add', bclass : 'add', onpress : add_record},
+                {name : 'Edit', bclass : 'edit', opress : edit_record},
+                {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
+                {separator : true} 
+            ],
+            searchitems : [ 
+                {display : 'Ma tai san', name : 'Ma_tai_san', isdefault : true },
+                {display : 'User ID', name : 'UserID' } 
+            ],
+            sortname : "Ma_tai_san",
+            sortorder : "asc",
+            usepager : true,
+            title : 'Loan Table',
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : true,
+            width : 700,
+            height : 200
+        });
+
+        function test(com, grid) {
+            if (com == 'Delete') {
+                confirm('Delete ' + $('.trSelected', grid).length + ' items?')
+            } else if (com == 'Add') {
+                alert('Add New Item');
+            }
+        }
+        
         function add_record() { window.location='/front/test/add'; }
     
         function delete_record(command,grid)
@@ -31,35 +80,7 @@
                 window.location = '/user/edit/id/'+id;
             });
         } // edit_record
-
-        $('#jqGirdTest').flexigrid({
-            url: "http:\/\/localhost\/QLTSv1\/front\/test\/records\/index.php",
-            dataType: "json",
-            buttons: [
-                {name: 'Add', bclass: 'add', onpress: add_record},
-                {name: 'Edit', bclass: 'edit', onpress: edit_record},
-                {name: 'Delete', bclass: 'delete', onpress: delete_record}
-            ],
-            colModel: [
-                {display: 'Ma_tai_san', name: 'Ma_tai_san', width: 30, sortable: true, align: 'left'},
-                {display: 'UserID', name: 'UserID', width: 30, sortable: true, align: 'left'},
-                {display: 'Detail', name: 'Detail', width: 150, sortable: false, align: 'left'},
-                {display: 'Date', name: 'Date', width: 30, sortable: true, align: 'left'}
-            
-            ],
-            searchitems : [
-                {display: 'Ma_tai_san', name : 'Ma_tai_san'},
-                {display: 'UserID', name : 'UserID', isdefault: true}
-            ],
-            sortname: "Ma_tai_san",
-            sortorder: "asc",
-            usepager: true,
-            title: 'Loan Table',
-            useRp: true,
-            rp: 10,
-            width: 700,
-            height: 200
-        });
     });
+    -->
 </script>
 
