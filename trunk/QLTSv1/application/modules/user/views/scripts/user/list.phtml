@@ -6,8 +6,7 @@
  * @version 1.0
  * @author OanhNN
  */
-
-$this->jQuery()->enable();
+$this->jQuery()->enable()->uiEnable();
 $this->headLink()
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
@@ -17,11 +16,23 @@ $this->headScript()
 
 <table class='tableMembers' style="display:none"></table>
 
+<div id="dialog-form" style="display: none">
+    <p class="validateTips">All form fields are required.</p>
+    <?php echo $this->form; ?>
+</div>
+
+<div id="dialog-confirm" title="Delete user confirm?" style="display: none">
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+        Information of user will be permanently deleted and cannot be recovered. Are you sure?
+    </p>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function(){
-        
+        $( "#dialog:ui-dialog" ).dialog( "destroy" );
         $('.tableMembers').flexigrid({
-            url : '/QLTSv1/user/user/records',
+            url : '<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'records')); ?>',
             dataType : 'json',
             colModel : [ 
                 {display: 'Username', name: 'Username', width: 80, sortable: true, align: 'left'},
@@ -35,7 +46,7 @@ $this->headScript()
             ],
             buttons : [ 
                 {name : 'Add', bclass : 'add', onpress : add_record},
-                {name : 'Edit', bclass : 'edit', opress : edit_record},
+                {name : 'Edit', bclass : 'edit', onpress : edit_record},
                 {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
                 {separator : true},
                 {name : 'Detail', bclass : 'detail', onpress : detail_record}
@@ -56,7 +67,60 @@ $this->headScript()
             height : 250
         });
         
-        function add_record() { window.location='/QLTSv1/user/user/add'; }
+        function add_record() {
+            $("#dialog-form").attr('title', 'Create new user');
+            $("#dialog-form").dialog({
+                autoOpen: false,
+                height: 480,
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Create an account": function() {
+                        var bValid = true;
+                        allFields.removeClass( "ui-state-error" );
+                        bValid = bValid && checkLength( username, "username", 3, 16 );
+                        bValid = bValid && checkLength( email, "email", 6, 80 );
+
+                        bValid = bValid && checkRegexp( username, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
+                        // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
+                        bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. username@fsoft.com.vn" );
+
+                        if ( bValid ) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/QLTSv1/user/user/add",
+                                data: "UserID="+userid.val()+"&Username="+username.val()+"&FullName="+fullname.val()+"&Role="+role.val()+"&Email="+email.val()+"&Group="+group.val()+"&Phone="+phone.val()+"&Address="+address.val(),
+                                success: function (data){
+                                    var getData = $.parseJSON(data);
+                                    var tag = $("<div title='"+getData.status+"'></div>");
+                                    tag.html("<span>"+getData.msg+"</span>").dialog({
+                                        resizable: false,
+                                        height:200,
+                                        width: 300,
+                                        modal: true,
+                                        buttons: {
+                                            "OK": function() {
+                                                $('.tableMembers').flexReload();
+                                                $( this ).dialog( "close" );
+                                            }
+                                        }
+                                    }).dialog("open");
+                                }
+                            });
+                            $( this ).dialog( "close" );      
+                        }
+                            
+                    },
+                    Cancel: function() {
+                        $( this ).dialog( "close" );
+                    }
+                },
+                close: function() {
+                    allFields.val( "" ).removeClass( "ui-state-error" );
+                }
+            });
+            $( "#dialog-form" ).dialog( "open" );
+        }
     
         function delete_record(command,grid)
         {
@@ -68,7 +132,43 @@ $this->headScript()
             }
             $('.trSelected',grid).each(function(){
                 var id = this.id.substr(3);
-                window.location = '/QLTSv1/user/user/delete/UserID/'+id;
+                //window.location = '/QLTSv1/user/user/delete/UserID/'+id;
+                $( "#dialog-confirm" ).dialog({
+                    resizable: false,
+                    height:200,
+                    width:500,
+                    modal: true,
+                    buttons: {
+                        "Delete" : function() {
+                            //                            alert(id);
+                            $.ajax({
+                                type: "POST",
+                                url: '/QLTSv1/user/user/delete/',
+                                data: 'UserID='+id,
+                                success: function (data){
+                                    var getData = $.parseJSON(data);
+                                    var tag = $("<div title='"+getData.status+"'></div>");
+                                    tag.html("<span>"+getData.msg+"</span>").dialog({
+                                        resizable: false,
+                                        height:200,
+                                        width: 300,
+                                        modal: true,
+                                        buttons: {
+                                            "OK": function() {
+                                                $('.tableMembers').flexReload();
+                                                $( this ).dialog( "close" );
+                                            }
+                                        }
+                                    }).dialog("open");
+                                }
+                            });
+                            $( this ).dialog( "close" );
+                        },
+                        Cancel: function() {
+                            $( this ).dialog( "close" );
+                        }
+                    }
+                });
             });
         } // delete_record
 
@@ -77,12 +177,98 @@ $this->headScript()
             var record_count = $('.trSelected',grid).length;
             if (0 == record_count)
             {
-                alert('Select a record first by clicking on the appropriate row.');
+                alert('Please select a record first by clicking on the appropriate row.');
                 return;
             }
             $('.trSelected',grid).each(function(){
                 var id = this.id.substr(3);
-                window.location = '/QLTSv1/user/user/edit/UserID/'+id;
+                $.ajax({
+                    type: "POST",
+                    url: "/QLTSv1/user/user/detail",
+                    data: "UserID="+id,
+                    success: function(data) {
+                        //                        alert(data);
+                        var getData = $.parseJSON(data);
+                        if(getData.status == 'success'){
+                            // get user info success
+                            $("#UserID").attr('value', getData.data.UserID);
+                            $("#Username").attr('value', getData.data.Username);
+                            $("#FullName").attr('value', getData.data.FullName);
+                            $("#Role").attr('value', getData.data.Role);
+                            $("#Email").attr('value', getData.data.Email);
+                            $("#Group").attr('value', getData.data.Group);
+                            $("#Phone").attr('value', getData.data.Phone);
+                            $("#Address").attr('value', getData.data.Address);
+                            $("#dialog-form").attr('title', 'Edit user\'s information');
+                            $("#dialog-form").dialog({
+                                autoOpen: false,
+                                height: 480,
+                                width: 400,
+                                modal: true,
+                                buttons: {
+                                    "Save": function() {
+                                        var bValid = true;
+                                        allFields.removeClass( "ui-state-error" );
+
+                                        bValid = bValid && checkLength( username, "username", 3, 16 );
+                                        bValid = bValid && checkLength( email, "email", 6, 80 );
+
+                                        bValid = bValid && checkRegexp( username, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
+                                        // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
+                                        bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. username@fsoft.com.vn" );
+
+                                        if ( bValid ) {
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "/QLTSv1/user/user/edit",
+                                                data: "UserID="+userid.val()+"&Username="+username.val()+"&FullName="+fullname.val()+"&Role="+role.val()+"&Email="+email.val()+"&Group="+group.val()+"&Phone="+phone.val()+"&Address="+address.val(),
+                                                success: function (data){
+                                                    var getData = $.parseJSON(data);
+                                                    var tag = $("<div title='"+getData.status+"'></div>");
+                                                    tag.html("<span>"+getData.msg+"</span>").dialog({
+                                                        resizable: false,
+                                                        height:200,
+                                                        width: 300,
+                                                        modal: true,
+                                                        buttons: {
+                                                            "OK": function() {
+                                                                $('.tableMembers').flexReload();
+                                                                $( this ).dialog( "close" );
+                                                            }
+                                                        }
+                                                    }).dialog("open");
+                                                }
+                                            });
+                                            $( this ).dialog( "close" );      
+                                        }
+                            
+                                    },
+                                    Cancel: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                },
+                                close: function() {
+                                    allFields.val( "" ).removeClass( "ui-state-error" );
+                                }
+                            });
+                            $( "#dialog-form" ).dialog( "open" );
+                        } else {
+                            // get user info error
+                            var tag = $("<div title='Error'></div>");
+                            tag.html("<span>"+getData.msg+"</span>").dialog({
+                                resizable: false,
+                                height:300,
+                                width: 400,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }
+                    }
+                });
             });
         } // edit_record
         
@@ -90,13 +276,106 @@ $this->headScript()
             var record_count = $('.trSelected',grid).length;
             if (0 == record_count)
             {
-                alert('Select a record first by clicking on the appropriate row.');
+                alert('Please select a record first by clicking on the appropriate row.');
                 return;
             }
             $('.trSelected',grid).each(function(){
                 var id = this.id.substr(3);
-                window.location = '/QLTSv1/user/user/detail/UserID/'+id;
+                //            window.location = '/QLTSv1/user/user/detail/UserID/'+id;
+                $.ajax({
+                    type: "POST",
+                    url: "/QLTSv1/user/user/detail",
+                    data: "UserID="+id,
+                    success: function(data) {
+                        //                        alert(data);
+                        var getData = $.parseJSON(data);
+                        if(getData.status == 'success'){
+                            // get user info success
+                            var tag = $("<div title='User information'></div>");
+                            tag.html(
+                            '<table><tr><td>Usernam</td><td>:</td><td>'+getData.data.Username+
+                                '</td></tr><tr><td>Full Name</td><td>:</td><td>'+getData.data.FullName+
+                                '</td></tr><tr><td>Role</td><td>:</td><td>'+getData.data.Role+
+                                '</td></tr><tr><td>Email</td><td>:</td><td>'+getData.data.Email+
+                                '</td></tr><tr><td>Birthday</td><td>:</td><td>'+getData.data.Birthday+
+                                '</td></tr><tr><td>Group</td><td>:</td><td>'+getData.data.Group+
+                                '</td></tr><tr><td>Phone No.</td><td>:</td><td>'+getData.data.Phone+
+                                '</td></tr><tr><td>Address</td><td>:</td><td>'+getData.data.Address+
+                                '</td></tr></table>'
+                        ).dialog({
+                                resizable: false,
+                                height:350,
+                                width: 250,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }else{
+                            // get user info error
+                            var tag = $("<div title='Error'></div>");
+                            tag.html("<span>"+getData.msg+"</span>").dialog({
+                                resizable: false,
+                                height:300,
+                                width: 400,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }
+                    
+                    
+                    }
+                });
             });
         } // detail_record
+        
+        //////////////////////////////////
+        var tips = $(".validateTips");
+        var userid = $("#UserID"),
+        username = $("#Username"),
+        fullname = $("#FullName"),
+        role = $("#Role"),
+        email = $("#Email"),
+        group = $("#Group"),
+        phone = $("#Phone"),
+        address = $("#Address"),
+        allFields = $( [] ).add(userid).add(username).add(fullname).add(role).add(email).add(group).add(phone).add(address);
+            
+        function updateTips( t ) {
+            tips
+            .text( t )
+            .addClass( "ui-state-highlight" );
+            setTimeout(function() {
+                tips.removeClass( "ui-state-highlight", 1500 );
+            }, 500 );
+        }
+
+        function checkLength( o, n, min, max ) {
+            if ( o.val().length > max || o.val().length < min ) {
+                o.addClass( "ui-state-error" );
+                updateTips( "Length of " + n + " must be between " +
+                    min + " and " + max + "." );
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkRegexp( o, regexp, n ) {
+            if ( !( regexp.test( o.val() ) ) ) {
+                o.addClass( "ui-state-error" );
+                updateTips( n );
+                return false;
+            } else {
+                return true;
+            }
+        }
+ 
     });
 </script>

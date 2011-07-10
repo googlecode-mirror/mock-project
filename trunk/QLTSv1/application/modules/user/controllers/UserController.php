@@ -20,32 +20,48 @@ class User_UserController extends Zend_Controller_Action {
     }
 
     public function listAction() {
-        
+        require_once APPLICATION_PATH . '/modules/user/forms/User.php';
+        $form = new User_Form_User();
+        $this->view->form = $form;
     }
 
     public function detailAction() {
-        $UserID = (int) $this->_getParam('UserID', -1);
-        if ($UserID > 0) {
-            require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
-            $member = new User_Model_DbTable_Member();
-            $this->view->member = $member->getMember($UserID);
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        if ($this->getRequest()->isPost()) {
+            $UserID = (int) $this->getRequest()->getPost('UserID', -1);
+            if ($UserID > 0) {
+                require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
+                $user = new User_Model_DbTable_Member();
+                $status = 'success';
+                $data = (array) $user->getMember($UserID);
+                unset($data['Password']);
+                echo Zend_Json::encode(array('status' => $status, 'data' => $data));
+            } else {
+                $status = 'error';
+                $msg = 'Not found this user.';
+                echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
+            }
         } else {
-            // ko ton tai user
+            $status = 'error';
+            $msg = 'Not found POST value.';
+            echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
         }
     }
 
     public function addAction() {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
 
         require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
         require_once APPLICATION_PATH . '/modules/user/forms/User.php';
         $form = new User_Form_User();
-//        $form->submit->setLabel('Add');
 
         if ($this->getRequest()->isPost()) {
             $formData = $this->getRequest()->getPost();
             if ($form->isValid($formData)) {
                 $username = $form->getValue('Username');
-                $password = $form->getValue('Password');
+                $password = $this->encodePassword($username . '12345');
                 $role = $form->getValue('Role');
                 $fullname = $form->getValue('FullName');
                 $email = $form->getValue('Email');
@@ -56,80 +72,117 @@ class User_UserController extends Zend_Controller_Action {
                 $return = $member->addMember($username, $password, $role, $email, $fullname, $group, $phone, $address);
                 switch ($return) {
                     case -1: // loi email da ton tai
+                        $status = 'error';
+                        $msg = 'Email address is exist';
                         break;
                     case -2: // loi user da ton tai
+                        $status = 'error';
+                        $msg = 'Username is exist';
                         break;
                     case 0: // loi ko add
+                        $status = 'error';
+                        $msg = 'Cannot add this user';
                         break;
+                    case 1:
                     default : // update thanh cong
-                        $this->_redirect('/user/user/list');
+                        $status = 'success';
+                        $msg = 'Add user success';
+//                        $this->_redirect('/user/user/list');
                         break;
                 }
             } else {
-                $form->populate($formData);
+                $status = 'error';
+                $msg = 'Not found POST value';
             }
+        } else {
+            $status = 'error';
+            $msg = 'Not found POST value';
         }
-        $this->view->form = $form;
+        echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
     public function editAction() {
+
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
         require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
         require_once APPLICATION_PATH . '/modules/user/forms/User.php';
-
         $form = new User_Form_User();
-
+        $member = new User_Model_DbTable_Member();
         if ($this->getRequest()->isPost()) {
             $formData = $this->getRequest()->getPost();
             if ($form->isValid($formData)) {
                 $UserID = (int) $form->getValue('UserID');
+                $userInfor = $member->getMember($UserID);
                 $username = $form->getValue('Username');
-                $password = $form->getValue('Password');
+                $password = $userInfor['Password'];
                 $role = $form->getValue('Role');
                 $fullname = $form->getValue('FullName');
                 $email = $form->getValue('Email');
                 $group = $form->getValue('Group');
                 $phone = $form->getValue('Phone');
                 $address = $form->getValue('Address');
-                $member = new User_Model_DbTable_Member();
+
                 $return = $member->editMember($UserID, $username, $password, $role, $email, $fullname, $group, $phone, $address);
                 switch ($return) {
                     case -1: // loi email da ton tai
+                        $status = 'error';
+                        $msg = 'Email address is exist';
                         break;
                     case -2: // loi user da ton tai
+                        $status = 'error';
+                        $msg = 'Username is exist';
                         break;
-                    case 0: // loi ko update dc
+                    case 0: // loi ko add
+                        $status = 'error';
+                        $msg = 'Cannot edit this user';
                         break;
+                    case 1:
                     default : // update thanh cong
-                        $this->_redirect('/user/user/list');
+                        $status = 'success';
+                        $msg = 'Edit user\'s information success';
+//                        $this->_redirect('/user/user/list');
                         break;
                 }
             } else {
-                $form->populate($formData);
+                $status = 'error';
+                $msg = 'Not found POST value';
             }
         } else {
-            $UserID = (int) $this->_getParam('UserID', -1);
-            if ($UserID > 0) {
-                $member = new User_Model_DbTable_Member();
-                $form->populate($member->getMember($UserID));
-            } else {
-                // ko ton tai UserID
-            }
+            $status = 'error';
+            $msg = 'Not found POST value';
         }
-        $this->view->form = $form;
+        echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
     public function deleteAction() {
-//        if($this->getRequest()->isPost()){
-//            $UserID = (int) $this->getRequest()->getPost();
-//        }
-        $UserID = (int) $this->_getParam('UserID', -1);
-        // TODO : xu ly confirm delete
-        if ($UserID > 0) {
-            require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
-            $member = new User_Model_DbTable_Member;
-            $member->deleteMember($UserID);
-            $this->_redirect('/user/user/list');
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        if ($this->getRequest()->isPost()) {
+            $UserID = (int) $this->getRequest()->getPost('UserID', -1);
+            if ($UserID > 0) {
+                require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
+                require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Loan.php';
+                $member = new User_Model_DbTable_Member();
+                $loan = new Asset_Model_DbTable_Loan();
+                if ($loan->fetchRow("UserID = '$UserID'")) {
+                    $status = 'error';
+                    $msg = 'User van con muon TS';
+                } else {
+                    $member->deleteMember($UserID);
+                    $status = 'success';
+                    $msg = 'Delete success';
+                }
+            } else {
+                $status = 'error';
+                $msg = 'Not found this user.';
+            }
+        } else {
+            $status = 'error';
+            $msg = 'Not found POST value.';
         }
+        echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
     public function recordsAction() {
@@ -178,4 +231,8 @@ class User_UserController extends Zend_Controller_Action {
         echo Zend_Json::encode($jsonData);
     }
 
+    private function encodePassword($passwd) {
+//        return hash('sha256', 'hedspi' . $passwd . 'isk52');
+        return $passwd;
+    }
 }
