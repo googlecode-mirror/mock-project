@@ -16,6 +16,8 @@
  * 
  * @todo Model data from iteminfor table in database
  */
+
+require_once 'Zend/Db/Table/Abstract.php';
 class Asset_Model_DbTable_Loan extends Zend_Db_Table_Abstract {
 
     /**
@@ -109,14 +111,13 @@ class Asset_Model_DbTable_Loan extends Zend_Db_Table_Abstract {
             $sql = $sql . ' AND UserID = ' . $this->_db->quote($UserID, 'INTEGER');
         }
         if ($StartDate != null) {
-            $sql = $sql . ' AND Date >= ' . $StartDate;
+            $sql = $sql . ' AND Date >= ' . $this->_db->quote($StartDate);
         }
         if ($EndDate != null) {
-            $sql = $sql . ' AND Date <= ' . $EndDate;
+            $sql = $sql . ' AND Date <= ' . $this->_db->quote($EndDate);
         }
-        $sql = $sql . ';';
-        $result = $this->fetchAll($this->select()->where(sql));
-        if (!$result) {
+        $result = $this->fetchAll($this->select()->where($sql));
+        if (count($result)==0) {
             return null;
         }
         return $result;
@@ -133,12 +134,11 @@ class Asset_Model_DbTable_Loan extends Zend_Db_Table_Abstract {
         if ($EndDate != null) {
             $sql = $sql . ' AND loaninfor.Date <= ' . $EndDate;
         }
-        $sql = $sql . ';';
         $select = $this->select(Zend_Db_Table::SELECT_WITH_FROM_PART)
                 ->setIntegrityCheck(false);
         $result = $this->fetchAll($select->join('memberinfor as m', 'm.UserID = loaninfor.UserID', 'Username')
                                 ->where($sql));
-        if (!$result) {
+        if (count($result)==0) {
             return null;
         }
         return $result;

@@ -9,7 +9,7 @@
   ;       @author TuanNA18
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  */
-
+require_once 'Zend/Db/Table/Abstract.php';
 class Asset_Model_DbTable_Upgrade extends Zend_Db_Table_Abstract {
 
     protected $_name = 'upgradeinfor';       //Ten bang thao tac
@@ -24,7 +24,11 @@ class Asset_Model_DbTable_Upgrade extends Zend_Db_Table_Abstract {
             'Detail' => $Detail,
             'Date' => $Date
         );
-        $this->insert($data);
+        if($this->insert($data))
+        {
+        	return 1;
+        }
+        return 0;
     }
 
     //Sua mot Upgrade voi cac thuoc tinh di kem
@@ -94,14 +98,13 @@ class Asset_Model_DbTable_Upgrade extends Zend_Db_Table_Abstract {
             $sql = $sql . ' AND ItemID = ' . $this->_db->quote($ItemID, 'INTEGER');
         }
         if ($StartDate != null) {
-            $sql = $sql . ' AND Date >= ' . $StartDate;
+            $sql = $sql . ' AND Date >= ' . $this->_db->quote($StartDate);
         }
         if ($EndDate != null) {
-            $sql = $sql . ' AND Date <= ' . $EndDate;
+            $sql = $sql . ' AND Date <= ' . $this->_db->quote($EndDate);
         }
-        $sql = $sql . ';';
         $result = $this->fetchAll($this->select()->where($sql));
-        if (!$result) {
+        if (count($result)==0) {
             return null;
         }
         return $result;
