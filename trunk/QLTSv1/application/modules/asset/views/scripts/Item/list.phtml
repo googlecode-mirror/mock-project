@@ -1,33 +1,51 @@
 <?php
-$this->jQuery()->enable();
+$this->jQuery()->enable()->uiEnable();
 $this->headLink()
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
 $this->headScript()
         ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
-
 switch ($this->mode) {
     case 1:
+        $this->pagetitle = 'Tất cả tài sản';
         $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 1));
         break;
     case 2:
+        $this->pagetitle = 'Tài sản có thể mượn';
         $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 2));
         break;
     case 3:
+        $this->pagetitle = 'Tài sản đang cho mượn';
         $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 3));
         break;
     case 4:
+        $this->pagetitle = 'Tài sản đang hỏng';
         $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 4));
         break;
     default :
         // othermode
+        $this->pagetitle = 'Tất cả tài sản';
         $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'records', 'mode' => 1));
         break;
 }
+$uRole = Zend_Auth::getInstance()->getIdentity()->Role;
 ?>
 
 <table class='gridTable' style="display:none"></table>
-
+<?php if ($uRole == 0 || $uRole == 1) : ?>
+    <div id="dialog-form" style="display: none">
+        <p class="validateTips">All form fields are required.</p>
+        <?php echo $this->form; ?>
+    </div>
+<?php endif; ?>
+<?php if ($uRole == 0) : ?>
+    <div id="dialog-confirm" title="Delete user confirm?" style="display: none">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+            Information of item will be permanently deleted and cannot be recovered. Are you sure?
+        </p>
+    </div>
+<?php endif; ?>
 <script type="text/javascript">
     <!--
     $(document).ready(function(){
@@ -48,71 +66,356 @@ switch ($this->mode) {
                 {display: 'Place', name: 'Place', width: 100, sortable: true, align: 'left'}
             ],
             buttons : [ 
-                {name : 'Add', bclass : 'add', onpress : add_record},
-                {name : 'Edit', bclass : 'edit', opress : edit_record},
-                {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
-                {separator : true},
-                {name : 'Detail', bclass : 'detail', onpress : detail_record}
-            ],
-            searchitems : [ 
-                {display : 'Ma tai san', name : 'Ma_tai_san', isdefault : true },
-                {display : 'Ten tai san', name : 'Ten_tai_san' },
-                //                {display : 'Item ID', name : 'ItemID' },
-                {display : 'Type', name : 'Type' },
-            ],
-            sortname : "ItemID",
-            sortorder : "asc",
-            usepager : true,
-            title : 'Item Table',
-            useRp : true,
-            rp : 15,
-            showTableToggleBtn : true,
-            width : 1080,
-            height : 250
-        });
+<?php if ($uRole == 0) : ?>
+                                    {name : 'Add', bclass : 'add', onpress : add_record},
+<?php endif; ?>
+<?php if ($uRole == 0 || $uRole == 1) : ?>
+                                        {name : 'Edit', bclass : 'edit', onpress : edit_record},
+<?php endif; ?>
+<?php if ($uRole == 0) : ?>
+                                        {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
+<?php endif; ?>
+<?php if ($uRole == 0 || $uRole == 1) : ?>
+                                        {separator : true},
+<?php endif; ?>
+                            {name : 'Detail', bclass : 'detail', onpress : detail_record}
+                        ],
+                        searchitems : [ 
+                            {display : 'Ma tai san', name : 'Ma_tai_san', isdefault : true },
+                            {display : 'Ten tai san', name : 'Ten_tai_san' },
+                            //                {display : 'Item ID', name : 'ItemID' },
+                            {display : 'Type', name : 'Type' },
+                        ],
+                        sortname : "ItemID",
+                        sortorder : "asc",
+                        usepager : true,
+                        title : 'Item Table',
+                        useRp : true,
+                        rp : 15,
+                        showTableToggleBtn : true,
+                        width : 1080,
+                        height : 250
+                    });
         
-        function add_record() { window.location='/QLTSv1/asset/item/add'; }
-    
-        function delete_record(command,grid)
-        {
-            var record_count = $('.trSelected',grid).length;
-            if (0 == record_count)
-            {
-                alert('Please select a record first by clicking on the appropriate row.');
-                return;
-            }
-            $('.trSelected',grid).each(function(){
-                var id = this.id.substr(3);
-                window.location = '/QLTSv1/asset/item/delete/ItemID/'+id;
-            });
-        } // delete_record
+                    function detail_record(command,grid){
+                        var record_count = $('.trSelected',grid).length;
+                        if (0 == record_count)
+                        {
+                            alert('Please select a record first by clicking on the appropriate row.');
+                            return;
+                        }
+                        $('.trSelected',grid).each(function(){
+                            var id = this.id.substr(3);
+                            //            window.location = '/QLTSv1/user/user/detail/UserID/'+id;
+                            $.ajax({
+                                type: "POST",
+                                url: "/QLTSv1/asset/item/detail",
+                                data: "ItemID="+id,
+                                success: function(data) {
+                                    //                        alert(data);
+                                    var getData = $.parseJSON(data);
+                                    if(getData.status == 'success'){
+                                        // get user info success
+                                        var tag = $("<div title='Item\'s information'></div>");
+                                        tag.html(
+                                        '<table><tr><td>Ma tai san</td><td>:</td><td>'+getData.data.Ma_tai_san+
+                                            '</td></tr><tr><td>Ten tai san</td><td>:</td><td>'+getData.data.Ten_tai_san+
+                                            '</td></tr><tr><td>Description</td><td>:</td><td>'+getData.data.Description+
+                                            '</td></tr><tr><td>Type</td><td>:</td><td>'+getData.data.Type+
+                                            '</td></tr><tr><td>Start Date</td><td>:</td><td>'+getData.data.StartDate+
+                                            '</td></tr><tr><td>Price</td><td>:</td><td>'+getData.data.Price+
+                                            '</td></tr><tr><td>Warranty Time</td><td>:</td><td>'+getData.data.WarrantyTime+
+                                            '</td></tr><tr><td>Status</td><td>:</td><td>'+getData.data.Status+
+                                            '</td></tr><tr><td>Place</td><td>:</td><td>'+getData.data.Place+
+                                            '</td></tr></table>'
+                                    ).dialog({
+                                            resizable: false,
+                                            height:350,
+                                            width: 250,
+                                            modal: true,
+                                            buttons: {
+                                                "OK": function() {
+                                                    $( this ).dialog( "close" );
+                                                }
+                                            }
+                                        }).dialog("open");
+                                    }else{
+                                        // get user info error
+                                        var tag = $("<div title='Error'></div>");
+                                        tag.html("<span>"+getData.msg+"</span>").dialog({
+                                            resizable: false,
+                                            height:350,
+                                            width: 450,
+                                            modal: true,
+                                            buttons: {
+                                                "OK": function() {
+                                                    $( this ).dialog( "close" );
+                                                }
+                                            }
+                                        }).dialog("open");
+                                    }
+                    
+                    
+                                }
+                            });
+                        });
+                    } // detail_record
+        
+<?php if ($uRole == 0) : ?>
+            function add_record() {
+                $("#dialog-form").attr('title', 'Create new item');
+                $("#dialog-form").dialog({
+                    autoOpen: false,
+                    height: 550,
+                    width: 400,
+                    modal: true,
+                    buttons: {
+                        "Create an item": function() {
+                            var bValid = true;
+                            allFields.removeClass( "ui-state-error" );
+                            //                        bValid = bValid && checkLength( username, "username", 3, 16 );
+                            //                        bValid = bValid && checkLength( email, "email", 6, 80 );
+                            //
+                            //                        bValid = bValid && checkRegexp( username, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
+                            //                        // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
+                            //                        bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. username@fsoft.com.vn" );
 
-        function edit_record(command,grid)
-        {
-            var record_count = $('.trSelected',grid).length;
-            if (0 == record_count)
-            {
-                alert('Select a record first by clicking on the appropriate row.');
-                return;
+                            if ( bValid ) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/QLTSv1/asset/item/add",
+                                    data: "ItemID="+itemid.val()+"&MaTS="+maTS.val()+"&TenTS="+tenTS.val()+"&Description="+descr.val()+"&Type="+type.val()+"&StartDate="+startDate.val()+"&Price="+price.val()+"&WarrantyTime="+warrantyTime.val()+"&Status="+status.val()+"&Place="+place.val(),
+                                    success: function (data){
+                                        var getData = $.parseJSON(data);
+                                        var tag = $("<div title='"+getData.status+"'></div>");
+                                        tag.html("<span>"+getData.msg+"</span>").dialog({
+                                            resizable: false,
+                                            height:200,
+                                            width: 300,
+                                            modal: true,
+                                            buttons: {
+                                                "OK": function() {
+                                                    $('.gridTable').flexReload();
+                                                    $( this ).dialog( "close" );
+                                                }
+                                            }
+                                        }).dialog("open");
+                                    }
+                                });
+                                $( this ).dialog( "close" );      
+                            }
+                                    
+                        },
+                        Cancel: function() {
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    close: function() {
+                        allFields.val( "" ).removeClass( "ui-state-error" );
+                    }
+                });
+                $( "#dialog-form" ).dialog( "open" );
             }
-            $('.trSelected',grid).each(function(){
-                var id = this.id.substr(3);
-                window.location = '/QLTSv1/asset/item/detail/ItemID/'+id;
-            });
-        } // edit_record
-        
-        function detail_record(command,grid){
-            var record_count = $('.trSelected',grid).length;
-            if (0 == record_count)
+            
+            function delete_record(command,grid)
             {
-                alert('Select a record first by clicking on the appropriate row.');
-                return;
+                var record_count = $('.trSelected',grid).length;
+                if (0 == record_count)
+                {
+                    alert('Please select a record first by clicking on the appropriate row.');
+                    return;
+                }
+                $('.trSelected',grid).each(function(){
+                    var id = this.id.substr(3);
+                    //window.location = '/QLTSv1/user/user/delete/UserID/'+id;
+                    $( "#dialog-confirm" ).dialog({
+                        resizable: false,
+                        height:200,
+                        width:500,
+                        modal: true,
+                        buttons: {
+                            "Delete" : function() {
+                                //                            alert(id);
+                                $.ajax({
+                                    type: "POST",
+                                    url: '/QLTSv1/asset/item/delete/',
+                                    data: 'ItemID='+id,
+                                    success: function (data){
+                                        var getData = $.parseJSON(data);
+                                        var tag = $("<div title='"+getData.status+"'></div>");
+                                        tag.html("<span>"+getData.msg+"</span>").dialog({
+                                            resizable: false,
+                                            height:200,
+                                            width: 300,
+                                            modal: true,
+                                            buttons: {
+                                                "OK": function() {
+                                                    $('.gridTable').flexReload();
+                                                    $( this ).dialog( "close" );
+                                                }
+                                            }
+                                        }).dialog("open");
+                                    }
+                                });
+                                $( this ).dialog( "close" );
+                            },
+                            Cancel: function() {
+                                $( this ).dialog( "close" );
+                            }
+                        }
+                    });
+                });
+            } // delete_record
+<?php endif; ?>
+<?php if ($uRole == 0 || $uRole == 1) : ?>
+            function edit_record(command,grid)
+            {
+                var record_count = $('.trSelected',grid).length;
+                if (0 == record_count)
+                {
+                    alert('Please select a record first by clicking on the appropriate row.');
+                    return;
+                }
+                $('.trSelected',grid).each(function(){
+                    var id = this.id.substr(3);
+                    $.ajax({
+                        type: "POST",
+                        url: "/QLTSv1/asset/item/detail",
+                        data: "ItemID="+id,
+                        success: function(data) {
+                            //                        alert(data);
+                            var getData = $.parseJSON(data);
+                            if(getData.status == 'success'){
+                                // get user info success
+                                $("#ItemID").attr('value', getData.data.ItemID);
+                                $("#MaTS").attr('value', getData.data.Ma_tai_san);
+                                $("#TenTS").attr('value', getData.data.Ten_tai_san);
+                                $("#Description").attr('value', getData.data.Description);
+                                $("#Type").attr('value', getData.data.Type);
+                                $("#StartDate").attr('value', getData.data.StartDate);
+                                $("#Price").attr('value', getData.data.Price);
+                                $("#WarrantyTime").attr('value', getData.data.WarrantyTime);
+                                $("#Status").attr('value', getData.data.Status);
+                                $("#Place").attr('value', getData.data.Place);
+                                $("#dialog-form").attr('title', 'Edit user\'s information');
+                                $("#dialog-form").dialog({
+                                    autoOpen: false,
+                                    height: 550,
+                                    width: 400,
+                                    modal: true,
+                                    buttons: {
+                                        "Save": function() {
+                                            var bValid = true;
+                                            allFields.removeClass( "ui-state-error" );
+
+                                            //                                        bValid = bValid && checkLength( username, "username", 3, 16 );
+                                            //                                        bValid = bValid && checkLength( email, "email", 6, 80 );
+                                            //
+                                            //                                        bValid = bValid && checkRegexp( username, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
+                                            //                                        // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
+                                            //                                        bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. username@fsoft.com.vn" );
+
+                                            if ( bValid ) {
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "/QLTSv1/asset/item/edit",
+                                                    data: "ItemID="+itemid.val()+"&MaTS="+maTS.val()+"&TenTS="+tenTS.val()+"&Description="+descr.val()+"&Type="+type.val()+"&StartDate="+startDate.val()+"&Price="+price.val()+"&WarrantyTime="+warrantyTime.val()+"&Status="+status.val()+"&Place="+place.val(),
+                                                    success: function (data){
+                                                        var getData = $.parseJSON(data);
+                                                        var tag = $("<div title='"+getData.status+"'></div>");
+                                                        tag.html("<span>"+getData.msg+"</span>").dialog({
+                                                            resizable: false,
+                                                            height:200,
+                                                            width: 300,
+                                                            modal: true,
+                                                            buttons: {
+                                                                "OK": function() {
+                                                                    $('.gridTable').flexReload();
+                                                                    $( this ).dialog( "close" );
+                                                                }
+                                                            }
+                                                        }).dialog("open");
+                                                    }
+                                                });
+                                                $( this ).dialog( "close" );      
+                                            }
+                                    
+                                        },
+                                        Cancel: function() {
+                                            $( this ).dialog( "close" );
+                                        }
+                                    },
+                                    close: function() {
+                                        allFields.val( "" ).removeClass( "ui-state-error" );
+                                    }
+                                });
+                                $( "#dialog-form" ).dialog( "open" );
+                            } else {
+                                // get user info error
+                                var tag = $("<div title='Error'></div>");
+                                tag.html("<span>"+getData.msg+"</span>").dialog({
+                                    resizable: false,
+                                    height:300,
+                                    width: 400,
+                                    modal: true,
+                                    buttons: {
+                                        "OK": function() {
+                                            $( this ).dialog( "close" );
+                                        }
+                                    }
+                                }).dialog("open");
+                            }
+                        }
+                    });
+                });
+            } // edit_record
+                
+            /////////////
+            $( "#StartDate" ).datepicker({ dateFormat: 'yy-mm-dd' });
+            //////////////////////////////////
+            var tips = $(".validateTips");
+            var itemid = $("#ItemID"),
+            maTS = $("#MaTS"),
+            tenTS = $("#TenTS"),
+            descr = $("#Description"),
+            type = $("#Type"),
+            startDate = $("#StartDate"),
+            price = $("#Price"),
+            warrantyTime = $("#WarrantyTime"),
+            status = $("#Status"),
+            place = $("#Place"),
+            allFields = $( [] ).add(itemid).add(maTS).add(tenTS).add(descr).add(type).add(startDate).add(price).add(warrantyTime).add(status).add(place);
+                    
+            function updateTips( t ) {
+                tips
+                .text( t )
+                .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
             }
-            $('.trSelected',grid).each(function(){
-                var id = this.id.substr(3);
-                window.location = '/QLTSv1/asset/item/detail/ItemID/'+id;
-            });
-        } // detail_record
+
+            function checkLength( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function checkRegexp( o, regexp, n ) {
+                if ( !( regexp.test( o.val() ) ) ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( n );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+<?php endif; ?>
     });
     -->
 </script>

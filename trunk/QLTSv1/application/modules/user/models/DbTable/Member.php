@@ -35,7 +35,7 @@ class User_Model_DbTable_Member extends Zend_Db_Table_Abstract {
      * @param $group    String
      * @param $phone    String
      * @param $address  String
-     * @return   1  sussecc
+     * @return   1  success
      * @return   0  error not insert
      * @return  -1  error email exist
      * @return  -2  error username exist
@@ -148,7 +148,7 @@ class User_Model_DbTable_Member extends Zend_Db_Table_Abstract {
      * @param $username String
      * @return array()
      */
-    protected function getMemberFromUsername($username) {
+    public function getMemberFromUsername($username) {
         $row = $this->fetchRow("Username = '$username'");
         if ($row == NULL) {
             return NULL;
@@ -177,8 +177,8 @@ class User_Model_DbTable_Member extends Zend_Db_Table_Abstract {
      * 
      * @todo check exist username
      * @param $username String
-     * @return NULL not exist this email
-     * @return UserID 
+     * @return NULL if not exist
+     * @return UserID if exist
      */
     private function checkUsername($username) {
         $row = $this->fetchRow("Username = '$username'");

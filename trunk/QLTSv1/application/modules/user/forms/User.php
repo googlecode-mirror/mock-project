@@ -111,7 +111,7 @@ class User_Form_User extends Zend_Form {
                         array('class' => 'label'))
                 ));
 
-        $this->setName('profile-form')
+        $this->setName('user-form')
                 ->setMethod(Zend_Form::METHOD_POST)
                 ->setEnctype(Zend_Form::ENCTYPE_URLENCODED)
                 ->addElements(array($userid, $username, $role, $fullname, $email, $group, $phone, $address))

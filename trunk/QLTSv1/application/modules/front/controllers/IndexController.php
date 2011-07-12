@@ -20,21 +20,28 @@ class Front_IndexController extends Zend_Controller_Action {
 //        }
 //    }
     public function indexAction() {
-        // action body
-        echo "Hello world <br />";
-//        require_once APPLICATION_PATH . '/modules/user/forms/User.php';
-//        $form = new User_Form_User();
-//        echo $form;
-        require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
-        $user = new User_Model_DbTable_Member();
-        $status = 'success';
-        $data = (array) $user->getMember(2);
-        unset($data['Password']);
-        echo Zend_Json::encode(array('status' => $status, 'data' => $data));
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $role = Zend_Auth::getInstance()->getIdentity()->Role;
+            switch ($role) {
+                case 0: // Super Admin
+                    $this->_redirect('/user/user/list');
+                    break;
+                case 1: // Admin
+                    $this->_redirect('/asset/request/list/mode/2');
+                    break;
+                case 2: // IT
+                    $this->_redirect('/asset/loan/list/mode/2');
+                    break;
+                default : // User
+                    $this->_redirect('/asset/loan/list/mode/2');
+                    break;
+            }
+        } else {
+            $this->_redirect('/front/auth/login');
+        }
     }
 
     public function aboutAction() {
-        
     }
 
 }

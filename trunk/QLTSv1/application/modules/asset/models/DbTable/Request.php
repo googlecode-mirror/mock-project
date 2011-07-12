@@ -77,10 +77,11 @@
 
         //Lay mot Request tu ID
         public function getRequestFromID($id){
-            $row = $this->fetchRow('RequestID = ' . $this->_db->quote($id, 'INTEGER'));
-            if (!$row)
+            $id = (int) $id;
+            $row = $this->fetchRow("RequestID = '$id'");
+            if ($row == NULL)
             {
-                return null;
+                return NULL;
             }
             return $row->toArray();
         }

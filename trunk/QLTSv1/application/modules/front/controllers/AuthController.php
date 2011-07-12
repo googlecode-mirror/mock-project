@@ -72,7 +72,7 @@ class Front_AuthController extends Zend_Controller_Action {
         if ($this->_helper->getHelper('FlashMessenger')->getMessages()) {
             $this->view->messages = $this->_helper->getHelper('FlashMessenger')->getMessages();
         } else {
-//            $this->_redirect('/profile');
+            $this->_redirect('/front/index/index');
         }
     }
 

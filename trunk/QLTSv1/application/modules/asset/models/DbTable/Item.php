@@ -27,7 +27,7 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
      * function addItem()
      * 
      * @todo add new item
-     * @param $MaTS             Int
+     * @param $MaTS             String
      * @param $TenTS            String
      * @param $Description      String
      * @param $Type             Enum(0,1)
@@ -97,7 +97,7 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
      * 
      * @todo add new item
      * @param $ItemID           Int
-     * @param $MaTS             Int
+     * @param $MaTS             String
      * @param $TenTS            String
      * @param $Description      String
      * @param $Type             Enum(0,1)
@@ -136,10 +136,10 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
     }
 
     //Lay thong tin tai san theo Ma
-    public function getItemFromMa($Ma) {
-        $row = $this->fetchRow("Ma_tai_san = '" . $this->_db->quote($Ma) . "'");
-        if (!$row) {
-            return null;
+    public function getItemFromMa($MaTS) {
+        $row = $this->fetchRow("Ma_tai_san = '$MaTS'");
+        if ($row == NULL) {
+            return NULL;
         }
         return $row->toArray();
     }
@@ -189,12 +189,12 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
      * function checkMaTS()
      * 
      * @todo check exist Ma_tai_san
-     * @param $MaTS int
+     * @param $MaTS String
      * @return NULL if not exist
      * @return ItemID if exist
      */
     private function checkMaTS($MaTS) {
-        $MaTS = (int) $MaTS;
+//        $MaTS = (int) $MaTS;
         $row = $this->fetchRow("Ma_tai_san = '$MaTS'");
         if ($row == NULL) {
             return NULL;
