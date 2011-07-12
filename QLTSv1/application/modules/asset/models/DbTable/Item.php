@@ -2,20 +2,22 @@
 
 /**
  * QLTS v1
- * 
+ *
  * @version 1.0
  * @license
  */
 
 /**
  * Class User_Model_DbTable_Member
- * 
+ *
  * @package Application/Module/User
  * @version 1.0
  * @author TuanNA18
- * 
+ *
  * @todo Model data from iteminfor table in database
  */
+
+require_once 'Zend/Db/Table/Abstract.php';
 class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
 
     /**
@@ -25,7 +27,7 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
 
     /**
      * function addItem()
-     * 
+     *
      * @todo add new item
      * @param $MaTS             String
      * @param $TenTS            String
@@ -45,6 +47,11 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
 
         if ($this->checkMaTS($MaTS) != NULL) {
             return -1;
+        }
+    	if ($MaTS==NULL||$TenTS==NULL||$Description==NULL||$Type==NULL||
+        	$StartDate==NULL||$Price==NULL||$WarrantyTime==NULL||$Status==NULL||$Place==NULL) 
+        {
+            return 0;
         }
 
         $data = array(
@@ -66,7 +73,7 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
 
     /**
      * function getItemFromID()
-     * 
+     *
      * @todo get member info
      * @param $ItemID Int
      * @return array() | NULL
@@ -82,7 +89,7 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
 
     /**
      * function deleteItem()
-     * 
+     *
      * @todo delete member
      * @param $ItemID int
      * @return boolen
@@ -94,7 +101,7 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
 
     /**
      * function addItem()
-     * 
+     *
      * @todo add new item
      * @param $ItemID           Int
      * @param $MaTS             String
@@ -111,7 +118,9 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
      * @return  -1  error MaTS exist
      */
     public function editItem($ItemID, $MaTS, $TenTS, $Description, $Type, $StartDate, $Price, $WarrantyTime, $Status, $Place) {
-        if ($ItemID == NULL) {
+        if ($ItemID == NULL||$MaTS==NULL||$TenTS==NULL||$Description==NULL||$Type==NULL||
+        	$StartDate==NULL||$Price==NULL||$WarrantyTime==NULL||$Status==NULL||$Place==NULL) 
+        {
             return 0;
         }
         $ItemID = (int) $ItemID;
@@ -151,13 +160,13 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
             $sql = $sql . ' AND Ten_tai_san LIKE %' . $Ten . '%';
         }
         if ($Type != null) {
-            $sql = $sql . ' AND Type = ' . $Type;
+            $sql = $sql . ' AND Type = ' . $this->_db->quote($Type);
         }
         if ($Status != null) {
-            $sql = $sql . ' AND Status = ' . $Status;
+            $sql = $sql . ' AND Status = ' . $this->_db->quote($Status);
         }
         if ($Place != null) {
-            $sql = $sql . ' AND Place LIKE %' . $Place . '%';
+            $sql = $sql . " AND Place LIKE '%" . $Place . "%'";
         }
         if ($StartPrice != null) {
             $sql = $sql . ' AND Price >= ' . $this->_db->quote($StartPrice, 'INTEGER');
@@ -177,9 +186,8 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
         if ($EndDate != null) {
             $sql = $sql . ' AND StartDate <= ' . $EndDate;
         }
-        $sql = $sql . ';';
-        $result = $this->fetchAll($this->select()->where($sql));
-        if (!$result) {
+	    $result = $this->fetchAll($this->select()->where($sql));
+        if (count($result)==0) {
             return null;
         }
         return $result;
@@ -187,15 +195,15 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
 
     /**
      * function checkMaTS()
-     * 
+     *
      * @todo check exist Ma_tai_san
      * @param $MaTS String
      * @return NULL if not exist
      * @return ItemID if exist
      */
-    private function checkMaTS($MaTS) {
+    public function checkMaTS($MaTS) {
 //        $MaTS = (int) $MaTS;
-        $row = $this->fetchRow("Ma_tai_san = '$MaTS'");
+        $row = $this->fetchRow("Ma_tai_san = ". $this->_db->quote($MaTS));
         if ($row == NULL) {
             return NULL;
         }

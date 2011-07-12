@@ -8,6 +8,7 @@
 ;       @author TuanNA18
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  */
+	require_once 'Zend/Db/Table/Abstract.php';
     class Asset_Model_DbTable_Request extends Zend_Db_Table_Abstract{
         protected $_name='requestinfor';       //Ten bang thao tac
 
@@ -99,23 +100,22 @@
             }
             if ($Type!=null)
             {
-                $sql = $sql. ' AND Type = ' . $Type;
+                $sql = $sql. ' AND Type = ' . $this->_db->quote($Type);
             }
             if ($Accept!=null)
             {
-                $sql = $sql. ' AND Accept = ' . $Accept;
+                $sql = $sql. ' AND Accept = ' . $this->_db->quote($Accept);
             }
             if ($StartDate!=null)
             {
-                $sql = $sql. ' AND Date >= ' . $StartDate;
+                $sql = $sql. ' AND Date >= ' . $this->_db->quote($StartDate);
             }
             if ($EndDate!=null)
             {
-                $sql = $sql. ' AND Date <= ' . $EndDate;
+                $sql = $sql. ' AND Date <= ' . $this->_db->quote($EndDate);
             }
-            $sql=$sql.';';
             $result = $this->fetchAll($this->select()->where($sql));
-            if (!$result)
+            if (count($result)==0)
             {
                 return null;
             }

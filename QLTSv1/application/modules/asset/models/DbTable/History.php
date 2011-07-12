@@ -9,7 +9,7 @@
   ;       @author TuanNA18
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  */
-
+require_once 'Zend/Db/Table/Abstract.php';
 class Asset_Model_DbTable_History extends Zend_Db_Table_Abstract {
 
     protected $_name = 'historyinfor';       //Ten bang thao tac
@@ -24,7 +24,10 @@ class Asset_Model_DbTable_History extends Zend_Db_Table_Abstract {
             'Detail' => $Detail,
             'Date' => $Date
         );
-        return $this->insert($data);
+        if ($this->insert($data)) {
+            return 1;
+        }
+        return 0;
     }
 
     //Sua mot History voi cac thuoc tinh di kem
@@ -92,14 +95,13 @@ class Asset_Model_DbTable_History extends Zend_Db_Table_Abstract {
             $sql = $sql . ' AND ItemID = ' . $this->_db->quote($ItemID, 'INTEGER');
         }
         if ($StartDate != null) {
-            $sql = $sql . ' AND Date >= ' . $StartDate;
+            $sql = $sql . ' AND Date >= ' . $this->_db->quote($StartDate);
         }
         if ($EndDate != null) {
-            $sql = $sql . ' AND Date <= ' . $EndDate;
+            $sql = $sql . ' AND Date <= ' . $this->_db->quote($EndDate);
         }
-        $sql = $sql . ';';
         $result = $this->fetchAll($this->select()->where($sql));
-        if (!$result) {
+        if (count($result)==0) {
             return null;
         }
         return $result;
