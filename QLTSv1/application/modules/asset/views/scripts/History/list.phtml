@@ -1,10 +1,11 @@
 <?php
-$this->jQuery()->enable();
+$this->jQuery()->enable()->uiEnable();
 $this->headLink()
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
 $this->headScript()
         ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+$this->pagetitle = 'Lịch sử mượn và trả tài sản';
 ?>
 
 <table class='gridTable' style="display:none"></table>
@@ -16,15 +17,17 @@ $this->headScript()
             url : '/QLTSv1/asset/history/records',
             dataType : 'json',
             colModel : [ 
-//                {display: 'Item ID', name: 'ItemID', width: 50, sortable: true, align: 'left'},
-                {display: 'ItemID', name: 'ItemID', width: 70, sortable: true, align: 'left'},
-                {display: 'Nguoi ban giao', name: 'LUserID', width: 100, sortable: true, align: 'left'},
-                {display: 'Nguoi nhan', name: '', width: 300, sortable: true, align: 'left'},
-                {display: 'Date', name: 'Type', width: 50, sortable: true, align: 'left'},
-                {display: 'Detail', name: 'StartDate', width: 70, sortable: false, align: 'left'},
+                //                {display: 'Item ID', name: 'ItemID', width: 50, sortable: true, align: 'left'},
+                {display: 'Ma tai san', name: 'Ma_tai_san', width: 70, sortable: true, align: 'left'},
+                {display: 'Ten tai san', name: 'Ten_tai_san', width: 100, sortable: false, align: 'left'},
+                {display: 'Nguoi ban giao', name: 'LUsername', width: 100, sortable: true, align: 'left'},
+                {display: 'Nguoi nhan', name: 'RUsername', width: 100, sortable: true, align: 'left'},
+                {display: 'Date', name: 'Date', width: 70, sortable: true, align: 'left'},
+                {display: 'Detail', name: 'Detail', width: 300, sortable: false, align: 'left'},
             ],
             buttons : [ 
-                {name : 'Detail', bclass : 'detail', onpress : detail_record}
+                {name : 'Detail', bclass : 'detail', onpress : detail_record},
+                {name : 'Find as date', bclass : 'search', onpress : date_search}
             ],
             searchitems : [ 
                 {display : 'ItemID', name : 'ItemID', isdefault : true },
@@ -35,7 +38,7 @@ $this->headScript()
             sortname : "ItemID",
             sortorder : "asc",
             usepager : true,
-            title : 'Item Table',
+            title : 'History Table',
             useRp : true,
             rp : 15,
             showTableToggleBtn : true,
@@ -47,13 +50,64 @@ $this->headScript()
             var record_count = $('.trSelected',grid).length;
             if (0 == record_count)
             {
-                alert('Select a record first by clicking on the appropriate row.');
+                alert('Please select a record first by clicking on the appropriate row.');
                 return;
             }
             $('.trSelected',grid).each(function(){
                 var id = this.id.substr(3);
-                window.location = '/QLTSv1/asset/item/detail/ItemID/'+id;
+                //            window.location = '/QLTSv1/user/user/detail/UserID/'+id;
+                $.ajax({
+                    type: "POST",
+                    url: "/QLTSv1/asset/history/detail",
+                    data: "HistoryID="+id,
+                    success: function(data) {
+                        //                        alert(data);
+                        var getData = $.parseJSON(data);
+                        if(getData.status == 'success'){
+                            // get user info success
+                            var tag = $("<div title='History\'s information'></div>");
+                            tag.html(
+                            '<table><tr><td>Ma tai san</td><td>:</td><td>'+getData.data.Ma_tai_san+
+                                '</td></tr><tr><td>Ten tai san</td><td>:</td><td>'+getData.data.Ten_tai_san+
+                                '</td></tr><tr><td>Nguoi ban giao</td><td>:</td><td>'+getData.data.LUsername+
+                                '</td></tr><tr><td>Nguoi nhan</td><td>:</td><td>'+getData.data.RUsername+
+                                '</td></tr><tr><td>Date</td><td>:</td><td>'+getData.data.Date+
+                                '</td></tr><tr><td>Detail</td><td>:</td><td>'+getData.data.Detail+
+                                '</td></tr></table>'
+                        ).dialog({
+                                resizable: false,
+                                height:350,
+                                width: 250,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }else{
+                            // get user info error
+                            var tag = $("<div title='Error'></div>");
+                            tag.html("<span>"+getData.msg+"</span>").dialog({
+                                resizable: false,
+                                height:350,
+                                width: 450,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }
+                    
+                    
+                    }
+                });
             });
         } // detail_record
+        function date_search(command,grid){
+        
+        } // date_search
     });
 </script>

@@ -8,65 +8,115 @@ class Asset_LoanController extends Zend_Controller_Action {
 
     public function addAction() {
 
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
         require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Loan.php';
         require_once APPLICATION_PATH . '/modules/asset/forms/Loan.php';
-        require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Loan.php';
+        require_once APPLICATION_PATH . '/modules/asset/models/DbTable/History.php';
         require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Item.php';
+        require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
 
         $form = new Asset_Form_Loan();
-        if (Zend_Auth::getInstance()->hasIdentity()) {
-            $memberInfo = Zend_Auth::getInstance()->getIdentity();
-            
-        } else {
-            // chua dang nhap
-        }
+
         if ($this->getRequest()->isPost()) {
             $formData = $this->getRequest()->getPost();
             if ($form->isValid($formData)) {
-                $MaTS = $form->getValues('MaTS');
-                $UserID = $form->getValue('UserID');
-                $Detail = $form->getValues('Detail');
-                $Date = date("m/d/Y", ($form->getValue('Date')));
+                $MaTS = $form->getValue('MaTS');
+                $Username = $form->getValue('Username');
+                $Detail = $form->getValue('Detail');
+                $Date = date('Y-m-d');
+                $Place = $form->getValue('Place');
 
                 $item = new Asset_Model_DbTable_Item();
                 $loan = new Asset_Model_DbTable_Loan();
                 $history = new Asset_Model_DbTable_History();
-                
-                $item->getItemFromMa($MaTS);
-                $loan->addLoan($MaTS, $UserID, $Detail, $Date);
-                $history->addHistory($memberInfo->UserID, $UserID, $ItemID, $Detail, $Date);
-                switch ($return) {
-                    case -1: // loi email da ton tai
-//                        break;
-                    case -2: // loi user da ton tai
-//                        break;
-                    case 0: // loi ko update dc
-//                        break;
-                    default : // update thanh cong
-                        $this->_redirect('/asset/loan/list');
-                        break;
+                $user = new User_Model_DbTable_Member();
+
+                $itemInfo = $item->getItemFromMa($MaTS);
+                if ($itemInfo != NULL) {
+                    $userInfo = $user->getMemberFromUsername($Username);
+                    if ($userInfo != NULL) {
+                        if ($history->addHistory(Zend_Auth::getInstance()->getIdentity()->UserID, $userInfo['UserID'], $itemInfo['ItemID'], $Detail, $Date) &&
+                                $item->editItem($itemInfo['ItemID'], $MaTS, $itemInfo['Ten_tai_san'], $itemInfo['Description'], $itemInfo['Type'], $itemInfo['StartDate'], $itemInfo['Price'], $itemInfo['WarrantyTime'], 1, $Place) == 1 &&
+                                $loan->addLoan($MaTS, $userInfo['UserID'], $Detail, $Date) == 1) {
+                            $status = 'Success';
+                            $msg = 'Update database success.';
+                        } else {
+                            $status = 'Error';
+                            $msg = 'Update database fail.';
+                        }
+                    } else {
+                        $status = 'Error';
+                        $msg = 'Not found user';
+                    }
+                } else {
+                    $status = 'Error';
+                    $msg = 'Not found item';
                 }
             } else {
-                $form->populate($formData);
+                $status = 'Error';
+                $msg = 'POST value format inaild.';
             }
+        } else {
+            $status = 'Error';
+            $msg = 'Not found POST value.';
         }
-        $this->view->form = $form;
+        echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
     public function deleteAction() {
-        $MaTS = (int) $this->_getParam('MaTS', -1);
-        // TODO : xu ly confirm delete
-        if ($MaTS > 0) {
+
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        if ($this->getRequest()->isPost()) {
+            $MaTS = $this->getRequest()->getPost('MaTS');
             require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Loan.php';
+            require_once APPLICATION_PATH . '/modules/asset/models/DBTable/History.php';
+            require_once APPLICATION_PATH . '/modules/asset/models/DBTable/Item.php';
             $loan = new Asset_Model_DbTable_Loan();
-            $this->_redirect('/asset/loan/list');
+            $history = new Asset_Model_DbTable_History();
+            $item = new Asset_Model_DbTable_Item();
+            $loanInfo = $loan->getLoanFromMa($MaTS);
+            if ($loanInfo != NULL) {
+                $itemInfo = $item->getItemFromMa($MaTS);
+                if ($itemInfo != NULL) {
+                    if ($history->addHistory($loanInfo['UserID'], Zend_Auth::getInstance()->getIdentity()->UserID, $itemInfo['ItemID'], 'Tra thiet bi', date('Y-m-d')) &&
+                            $item->editItem($itemInfo['ItemID'], $MaTS, $itemInfo['Ten_tai_san'], $itemInfo['Description'], $itemInfo['Type'], $itemInfo['StartDate'], $itemInfo['Price'], $itemInfo['WarrantyTime'], 0, 'Kho') == 1 &&
+                            $loan->deleteLoan($MaTS) != NULL) {
+                        $status = 'Success';
+                        $msg = 'Update database success.';
+                    } else {
+                        $status = 'Error';
+                        $msg = 'Update database fail.';
+                    }
+                } else {
+                    $status = 'Error';
+                    $msg = 'Not found record';
+                }
+            } else {
+                $status = 'Error';
+                $msg = 'Not found record';
+            }
         } else {
-            // ko ton tai item
+            $status = 'Error';
+            $msg = 'Not found POST value.';
         }
+        echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
     public function listAction() {
-        
+        // phan chuc nang theo user type
+        // Super Admin, Admin : add, delete, list
+        // User, IT : list
+        // phan chuc nang theo yeu cau
+        // mode = 1 : list all item
+        // mode = 2 : list all item minh muon (default)
+        $this->view->mode = $this->_getParam('mode', 2);
+
+        require_once APPLICATION_PATH . '/modules/asset/forms/Loan.php';
+        $form = new Asset_Form_Loan();
+        $this->view->form = $form;
     }
 
     public function recordsAction() {
@@ -85,9 +135,28 @@ class Asset_LoanController extends Zend_Controller_Action {
         $search_column = $this->_getParam('qtype', 'Ma_tai_san');
         $search_for = $this->_getParam('query', '');
 
-        $select = $loan->select()->order("$sort_column $sort_order")->limit($limit, $offset);
-//        Zend_Debug::dump($select);
-//        exit ();
+        $mode = (int) $this->_getParam('mode', 2);
+
+        switch ($mode) {
+            case 1: // list all item
+                $select = $loan->select(Zend_Db_Table::SELECT_WITH_FROM_PART)
+                                ->setIntegrityCheck(false)
+                                ->join(array('u' => 'memberinfor'), 'loaninfor.UserID = u.UserID', array('Username' => 'u.Username'))
+                                ->join(array('i' => 'iteminfor'), 'loaninfor.Ma_tai_san = i.Ma_tai_san', array('Ten_tai_san' => 'i.Ten_tai_san'))
+                                ->order("$sort_column $sort_order")->limit($limit, $offset);
+                break;
+            case 2: // list all item user dang muon
+            default :
+                $uid = Zend_Auth::getInstance()->getIdentity()->UserID;
+                $select = $loan->select(Zend_Db_Table::SELECT_WITH_FROM_PART)
+                        ->setIntegrityCheck(false)
+                        ->join(array('u' => 'memberinfor'), 'loaninfor.UserID = u.UserID', array('Username' => 'u.Username'))
+                        ->join(array('i' => 'iteminfor'), 'loaninfor.Ma_tai_san = i.Ma_tai_san', array('Ten_tai_san' => 'i.Ten_tai_san'))
+                        ->where("loaninfor.UserID = '$uid'")
+                        ->order("$sort_column $sort_order")->limit($limit, $offset);
+                break;
+        }
+        
 
         if (!empty($search_column) && !empty($search_for)) {
             $select->where($search_column . ' LIKE ?', '%' . $search_for . '%');

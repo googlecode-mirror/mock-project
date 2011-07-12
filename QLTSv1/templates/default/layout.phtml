@@ -11,7 +11,7 @@
 $this->headTitle()->append($this->translate('QLTS v1'));
 $this->headTitle()->setSeparator(' :: ');
 $this->headTitle()->append($this->pagetitle);
-
+$this->jQuery()->enable()->uiEnable();
 //$this->jQuery()->uiEnable();
 if ($this->jQuery()->uiIsEnabled()) {
     $this->jQuery()->setUiLocalPath($this->baseUrl() . '/lib/jquery-ui-1.8.14/js/jquery-ui-1.8.14.custom.min.js')
@@ -47,6 +47,7 @@ $this->userInfo = Zend_Auth::getInstance()->getIdentity();
             </div><!-- end of leftside-->
             <div id="rightside">
                 <div id="pageContent">
+                    <h2 style="font-size: 18px; margin: 15px;"><?php echo $this->pagetitle; ?></h2>
                     <?php echo $this->layout()->content; ?>
                 </div>
             </div>

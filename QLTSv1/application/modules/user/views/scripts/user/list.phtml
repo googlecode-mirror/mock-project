@@ -12,6 +12,7 @@ $this->headLink()
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
 $this->headScript()
         ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+$this->pagetitle = 'Quản lý thành viên';
 ?>
 
 <table class='tableMembers' style="display:none"></table>
@@ -291,9 +292,9 @@ $this->headScript()
                         var getData = $.parseJSON(data);
                         if(getData.status == 'success'){
                             // get user info success
-                            var tag = $("<div title='User information'></div>");
+                            var tag = $("<div title='User\'s information'></div>");
                             tag.html(
-                            '<table><tr><td>Usernam</td><td>:</td><td>'+getData.data.Username+
+                            '<table><tr><td>Username</td><td>:</td><td>'+getData.data.Username+
                                 '</td></tr><tr><td>Full Name</td><td>:</td><td>'+getData.data.FullName+
                                 '</td></tr><tr><td>Role</td><td>:</td><td>'+getData.data.Role+
                                 '</td></tr><tr><td>Email</td><td>:</td><td>'+getData.data.Email+

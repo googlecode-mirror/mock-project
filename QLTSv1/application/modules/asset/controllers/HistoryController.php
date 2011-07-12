@@ -7,14 +7,39 @@ class Asset_HistoryController extends Zend_Controller_Action {
     }
 
     public function detailAction() {
-        $HistoryID = (int) $this->_getParam('ID', -1);
-        if ($ItemID > 0) {
-            require_once APPLICATION_PATH . '/modules/asset/models/DbTable/History.php';
-            $history = Asset_Model_DbTable_History();
-            $this->view->history = $history->getHistoryFromID($HistoryID);
+
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        if ($this->getRequest()->isPost()) {
+            $HistoryID = (int) $this->getRequest()->getPost('HistoryID', -1);
+            if ($HistoryID > 0) {
+                require_once APPLICATION_PATH . '/modules/asset/models/DbTable/History.php';
+                $history = new Asset_Model_DbTable_History();
+                $select = $history->select(Zend_Db_Table::SELECT_WITH_FROM_PART)
+                        ->setIntegrityCheck(false)
+                        ->join(array('lu' => 'memberinfor'), 'historyinfor.LUserID = lu.UserID', array('LUsername' => 'lu.Username'))
+                        ->join(array('ru' => 'memberinfor'), 'historyinfor.RUserID = ru.UserID', array('RUsername' => 'ru.Username'))
+                        ->join('iteminfor', 'historyinfor.ItemID = iteminfor.ItemID', array('Ma_tai_san', 'Ten_tai_san'))
+                        ->where("historyinfor.HistoryID='$HistoryID'");
+                if ($row = $history->fetchRow($select)) {
+                    $status = 'success';
+                    echo Zend_Json::encode(array('status' => $status, 'data' => $row->toArray()));
+                } else {
+                    $status = 'error';
+                    $msg = 'Not found detail of this history.';
+                    echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
+                }
+            } else {
+                $status = 'error';
+                $msg = 'Not found detail of this history.';
+                echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
+            }
         } else {
-            //TODO ko ton tai Item
+            $status = 'error';
+            $msg = 'Not found POST value.';
+            echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
         }
+        
     }
 
     public function listAction() {
@@ -37,7 +62,13 @@ class Asset_HistoryController extends Zend_Controller_Action {
         $search_column = $this->_getParam('qtype', 'ItemID');
         $search_for = $this->_getParam('query', '');
 
-        $select = $history->select()->order("$sort_column $sort_order")->limit($limit, $offset);
+//        $select = $history->select()->order("$sort_column $sort_order")->limit($limit, $offset);
+        $select = $history->select(Zend_Db_Table::SELECT_WITH_FROM_PART)
+                        ->setIntegrityCheck(false)
+                        ->join(array('lu' => 'memberinfor'), 'historyinfor.LUserID = lu.UserID', array('LUsername' => 'lu.Username'))
+                        ->join(array('ru' => 'memberinfor'), 'historyinfor.RUserID = ru.UserID', array('RUsername' => 'ru.Username'))
+                        ->join('iteminfor', 'historyinfor.ItemID = iteminfor.ItemID', array('Ma_tai_san', 'Ten_tai_san'))
+                        ->order("$sort_column $sort_order")->limit($limit, $offset);
 
         if (!empty($search_column) && !empty($search_for)) {
             $select->where($search_column . ' LIKE ?', '%' . $search_for . '%');
@@ -56,8 +87,8 @@ class Asset_HistoryController extends Zend_Controller_Action {
             );
         }
 
-        $this->getResponse()
-                ->setHeader('Content-Type', 'application/json');
+//        $this->getResponse()
+//                ->setHeader('Content-Type', 'application/json');
 
         $jsonData = array(
             'page' => $page,

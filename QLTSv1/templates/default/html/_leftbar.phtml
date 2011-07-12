@@ -12,50 +12,57 @@
             case 0: // Super Admin
                 ?>
                 <ul>
-                    <li><a href="#">Quản lý yêu cầu</a></li>
-                    <li><a href="#">Quản lý tài khoản</a></li>
-                    <li><a href="#">Tài sản đang mượn</a></li>
-                    <li><a href="#">Yêu cầu tài sản</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'user', 'action' => 'list')); ?>">Quản lý tài khoản</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'list', 'mode' => 1)); ?>">Tất cả các yêu cầu</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'list', 'mode' => 2)); ?>">Các yêu cầu chưa xử lý</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'list', 'mode' => 3)); ?>">Các yêu cầu của bạn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list', 'mode' => 1)); ?>">Tất tài sản</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list', 'mode' => 2)); ?>">Tài sản trong kho</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list','mode' => 3)); ?>">Tài sản đang cho mượn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list','mode' => 4)); ?>">Tài sản đang hỏng</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'loan', 'action' => 'list','mode' => 2)); ?>">Tài sản bạn mượn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list','mode' => 3)); ?>">Cho mượn và nhận lại</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'history', 'action' => 'list','mode' => 3)); ?>">Lịch sử mượn và trả</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'upgrade', 'action' => 'list')); ?>">Lịch sử nâng cấp</a></li>
                 </ul>
                 <?php
                 break;
             case 1: // Admin
                 ?>
                 <ul>
-                    <li><a href="#">Quản lý yêu cầu</a></li>
-                    <li><a href="#">Quản lý tài khoản</a></li>
-                    <li><a href="#">Tài sản đang mượn</a></li>
-                    <li><a href="#">Yêu cầu tài sản</a></li>
-                </ul>
-                <?php
-                break;
-            case 2: // User
-                ?>
-                <ul>
-                    <li><a href="#">Quản lý yêu cầu</a></li>
-                    <li><a href="#">Quản lý tài khoản</a></li>
-                    <li><a href="#">Tài sản đang mượn</a></li>
-                    <li><a href="#">Yêu cầu tài sản</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'list', 'mode' => 1)); ?>">Tất cả các yêu cầu</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'list', 'mode' => 2)); ?>">Các yêu cầu chưa xử lý</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'list', 'mode' => 3)); ?>">Các yêu cầu của bạn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list', 'mode' => 1)); ?>">Tất tài sản</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list', 'mode' => 2)); ?>">Tài sản trong kho</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list','mode' => 3)); ?>">Tài sản đang cho mượn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list','mode' => 4)); ?>">Tài sản đang hỏng</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'loan', 'action' => 'list','mode' => 2)); ?>">Tài sản bạn mượn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list','mode' => 3)); ?>">Cho mượn và nhận lại</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'history', 'action' => 'list','mode' => 3)); ?>">Lịch sử mượn và trả</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'upgrade', 'action' => 'list')); ?>">Lịch sử nâng cấp</a></li>
                 </ul>
                 <?php
                 break;
             case 3: // IT
                 ?>
                 <ul>
-                    <li><a href="#">Quản lý yêu cầu</a></li>
-                    <li><a href="#">Quản lý tài khoản</a></li>
-                    <li><a href="#">Tài sản đang mượn</a></li>
-                    <li><a href="#">Yêu cầu tài sản</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'list', 'mode' => 3)); ?>">Các yêu cầu của bạn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list', 'mode' => 2)); ?>">Tài sản trong kho</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'loan', 'action' => 'list','mode' => 2)); ?>">Tài sản bạn mượn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'upgrade', 'action' => 'list')); ?>">Lịch sử nâng cấp</a></li>
                 </ul>
                 <?php
                 break;
+            case 2:
             default : // Other
                 ?>
                 <ul>
-                    <li><a href="#">Quản lý yêu cầu</a></li>
-                    <li><a href="#">Quản lý tài khoản</a></li>
-                    <li><a href="#">Tài sản đang mượn</a></li>
-                    <li><a href="#">Yêu cầu tài sản</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'list', 'mode' => 3)); ?>">Các yêu cầu của bạn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list', 'mode' => 1)); ?>">Tất tài sản</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'item', 'action' => 'list', 'mode' => 2)); ?>">Tài sản trong kho</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'loan', 'action' => 'list','mode' => 2)); ?>">Tài sản bạn mượn</a></li>
+                    <li><a href="<?php echo $this->url(array('module' => 'asset', 'controller' => 'upgrade', 'action' => 'list')); ?>">Lịch sử nâng cấp</a></li>
                 </ul>
                 <?php
                 break;

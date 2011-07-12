@@ -1,9 +1,0 @@
-<?php echo "Login OK"; ?>
-<br />
-<a href="<?php echo $this->url(array('module' => 'front', 'controller' => 'auth', 'action' => 'logout')); ?>">
-    Logout
-</a>
-<br />
-<a href="<?php echo $this->url(array('module' => 'user', 'controller' => 'profile', 'action' => 'detail', 'UserID' => Zend_Auth::getInstance()->getIdentity()->UserID )); ?>">
-    Profile
-</a>

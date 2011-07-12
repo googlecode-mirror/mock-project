@@ -172,7 +172,7 @@ class User_UserController extends Zend_Controller_Action {
                 } else {
                     $member->deleteMember($UserID);
                     $status = 'success';
-                    $msg = 'Delete success';
+                    $msg = 'Delete user success';
                 }
             } else {
                 $status = 'error';

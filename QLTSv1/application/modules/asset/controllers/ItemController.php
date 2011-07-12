@@ -12,6 +12,9 @@ class Asset_ItemController extends Zend_Controller_Action {
 
     public function addAction() {
 
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
         require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Item.php';
         require_once APPLICATION_PATH . '/modules/asset/forms/Item.php';
 
@@ -19,12 +22,12 @@ class Asset_ItemController extends Zend_Controller_Action {
         if ($this->getRequest()->isPost()) {
             $formData = $this->getRequest()->getPost();
             if ($form->isValid($formData)) {
-                $itemID = (int) $form->getValue('ItemID');
+//                $ItemID = (int) $form->getValue('ItemID');
                 $maTS = $form->getValue('MaTS');
                 $tenTS = $form->getValue('TenTS');
                 $descr = $form->getValue('Description');
                 $type = $form->getValue('Type');
-                $startDate = date("m/d/Y", ($form->getValue('StartDate')));
+                $startDate = $form->getValue('StartDate');
                 $price = $form->getValue('Price');
                 $warrantyTime = $form->getValue('WarrantyTime');
                 $status = $form->getValue('Status');
@@ -32,99 +35,140 @@ class Asset_ItemController extends Zend_Controller_Action {
                 $item = new Asset_Model_DbTable_Item();
                 $return = $item->addItem($maTS, $tenTS, $descr, $type, $startDate, $price, $warrantyTime, $status, $place);
                 switch ($return) {
-                    case -1: // loi email da ton tai
-//                        break;
-                    case -2: // loi user da ton tai
-//                        break;
-                    case 0: // loi ko update dc
-//                        break;
-                    default : // update thanh cong
-                        $this->_redirect('/asset/item/list');
+                    case -1: // loi MaTS da ton tai
+                        $status = 'Error';
+                        $msg = 'MaTS is exist';
+                        break;
+                    case 0: // loi ko add dc
+                        $status = 'Error';
+                        $msg = 'Can\'t add this item';
+                        break;
+                    case 1:
+                    default : // add thanh cong
+                        $status = 'Success';
+                        $msg = 'Add item success';
                         break;
                 }
             } else {
-                $form->populate($formData);
+                $status = 'Error';
+                $msg = 'POST value format invaild';
             }
+        } else {
+            $status = 'Error';
+            $msg = 'Not found POST value';
         }
-        $this->view->form = $form;
+        echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
     public function editAction() {
+
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
 
         require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Item.php';
         require_once APPLICATION_PATH . '/modules/asset/forms/Item.php';
 
         $form = new Asset_Form_Item();
-
         if ($this->getRequest()->isPost()) {
             $formData = $this->getRequest()->getPost();
             if ($form->isValid($formData)) {
-                $itemID = (int) $form->getValue('ItemID');
+                $ItemID = (int) $form->getValue('ItemID');
                 $maTS = $form->getValue('MaTS');
                 $tenTS = $form->getValue('TenTS');
                 $descr = $form->getValue('Description');
                 $type = $form->getValue('Type');
-                $startDate = date("m/d/Y", ($form->getValue('StartDate')));
+                $startDate = $form->getValue('StartDate');
                 $price = $form->getValue('Price');
                 $warrantyTime = $form->getValue('WarrantyTime');
-                $status = $form->getValue('status');
+                $status = $form->getValue('Status');
                 $place = $form->getValue('Place');
                 $item = new Asset_Model_DbTable_Item();
-                $return = $item->editItem(itemID, $maTS, $tenTS, $descr, $type, $startDate, $place, $warrantyTime, $status, $place);
+                $return = $item->editItem($ItemID, $maTS, $tenTS, $descr, $type, $startDate, $price, $warrantyTime, $status, $place);
                 switch ($return) {
-                    case -1: // loi email da ton tai
-//                        break;
-                    case -2: // loi user da ton tai
-//                        break;
+                    case -1: // loi MaTS da ton tai
+                        $status = 'Error';
+                        $msg = 'MaTS is exist';
+                        break;
                     case 0: // loi ko update dc
-//                        break;
+                        $status = 'Error';
+                        $msg = 'Can\'t update this item';
+                        break;
+                    case 1:
                     default : // update thanh cong
-                        $this->_redirect('/asset/item/list');
+                        $status = 'Success';
+                        $msg = 'Update item success';
                         break;
                 }
             } else {
-                $form->populate($formData);
+                $status = 'Error';
+                $msg = 'POST value format invaild';
             }
         } else {
-            $itemID = (int) $this->_getParam('ItemID', -1);
-            if ($itemID > 0) {
-                $item = new Asset_Model_DbTable_Item();
-                $form->populate($item->getItemFromID($itemID));
-            } else {
-                // ko ton tai Item
-            }
+            $status = 'Error';
+            $msg = 'Not found POST value';
         }
-        $this->view->form = $form;
+        echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
     public function deleteAction() {
-        $ItemID = (int) $this->_getParam('ItemID', -1);
-        // TODO : xu ly confirm delete
-        if ($ItemID > 0) {
-            require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Item.php';
-            $item = new Asset_Model_DbTable_Item();
-            $item->deleteItem($ItemID);
-            $this->_redirect('/asset/item/list');
+
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        if ($this->getRequest()->isPost()) {
+            $UserID = (int) $this->getRequest()->getPost('UserID', -1);
+            $ItemID = (int) $this->getRequest()->getPost('ItemID', -1);
+            if ($ItemID > 0) {
+                require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Item.php';
+                $item = new Asset_Model_DbTable_Item();
+                $itemInfo = $item->getItemFromID($ItemID);
+                if ($itemInfo['Status'] == 1) {
+                    $status = 'Error';
+                    $msg = 'Item nay dang duoc user muon';
+                } else {
+                    $re = $item->deleteItem($ItemID);
+                    $status = 'Success';
+                    $msg = 'Delete item success';
+                }
+            } else {
+                $status = 'Error';
+                $msg = 'Not found this item.';
+            }
         } else {
-            // ko ton tai item
+            $status = 'Error';
+            $msg = 'Not found POST value.';
         }
+        echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
     public function detailAction() {
 
-        $ItemID = (int) $this->_getParam('ItemID', -1);
-        if ($ItemID > 0) {
-            require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Item.php';
-            $item = new Asset_Model_DbTable_Item();
-            $this->view->item = $item->getItemFromID($ItemID);
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        if ($this->getRequest()->isPost()) {
+            $ItemID = (int) $this->getRequest()->getPost('ItemID', -1);
+            if ($ItemID > 0) {
+                require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Item.php';
+                $item = new Asset_Model_DbTable_Item();
+                $status = 'success';
+                $data = (array) $item->getItemFromID($ItemID);
+                echo Zend_Json::encode(array('status' => $status, 'data' => $data));
+            } else {
+                $status = 'error';
+                $msg = 'Not found this item.';
+                echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
+            }
         } else {
-            //TODO ko ton tai Item
+            $status = 'error';
+            $msg = 'Not found POST value.';
+            echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
         }
     }
 
     public function listAction() {
         $this->view->mode = $this->_getParam('mode', 1);
-
+        require_once APPLICATION_PATH . '/modules/asset/forms/Item.php';
+        $form = new Asset_Form_Item();
+        $this->view->form = $form;
         // phan chuc nang theo user type
         // Super Admin : add, edit, delete, detail, list
         // Admin : edit, detail, list

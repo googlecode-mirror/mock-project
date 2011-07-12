@@ -52,38 +52,38 @@ class ZendExt_Controller_Plugin_AccessControl extends Zend_Controller_Plugin_Abs
         $action = $request->getActionName();
 
         // get role of current user
-//        if ($this->_auth->hasIdentity()) {
-//            // logined
-//            $identity = $this->_auth->getIdentity();
-//            switch ($identity->Role) {
-//                case 0: // Super Admin
-//                    $role = "SuperAdmin";
-//                    break;
-//                case 1: // Admin
-//                    $role = "Admin";
-//                    break;
-//                case 2: // IT
-//                    $role = "IT";
-//                    break;
-//                default : // User
-//                    $role = "User";
-//                    break;
-//            }
-//            if (!$this->_acl->isAllowed($role, $module . ':' . $controller, $action)) {
-////                // Not allowed access
-////                $request->setModuleName('front')
-////                        ->setControllerName('auth')
-////                        ->setActionName('login');
+        if ($this->_auth->hasIdentity()) {
+            // logined
+            $identity = $this->_auth->getIdentity();
+            switch ($identity->Role) {
+                case 0: // Super Admin
+                    $role = "SuperAdmin";
+                    break;
+                case 1: // Admin
+                    $role = "Admin";
+                    break;
+                case 2: // IT
+                    $role = "IT";
+                    break;
+                default : // User
+                    $role = "User";
+                    break;
+            }
+            if (!$this->_acl->isAllowed($role, $module . ':' . $controller, $action)) {
+                // Not allowed access
+                $request->setModuleName('front')
+                        ->setControllerName('auth')
+                        ->setActionName('nopermission');
 //            } else {
-//                // Allowed access
-//            }
-//        } else {
-//            // not login
-//            $role = NULL;
-//            $request->setModuleName('front')
-//                    ->setControllerName('auth')
-//                    ->setActionName('login');
-//        }
+                // Allowed access
+            }
+        } else {
+            // not login
+            $role = NULL;
+            $request->setModuleName('front')
+                    ->setControllerName('auth')
+                    ->setActionName('login');
+        }
     }
 
 }
