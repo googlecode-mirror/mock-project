@@ -20,11 +20,22 @@
     background: url(images/vcard.png) no-repeat center left;
 }
 .flexigrid div.fbutton .search {
-    background: url(images/find.png) no-repeat center left;
+    background: url(images/date_search.png) no-repeat center left;
 }
 .flexigrid div.fbutton .accept {
     background: url(images/accept.png) no-repeat center left;
 }
 .flexigrid div.fbutton .disaccept {
     background: url(images/cancel.png) no-repeat center left;
+}
+.flexigrid div.fbutton .check {
+    background: url(images/arrow_refresh.png) no-repeat center left;
+}
+.flexigrid div.fbutton .success {
+    background: url(images/thumb_up.png) no-repeat center left;
+}
+
+.flexigrid div.bDiv tr.trSelected:hover td,.flexigrid div.bDiv tr.trSelected:hover td.sorted,.flexigrid div.bDiv tr.trOver.trSelected td.sorted,.flexigrid div.bDiv tr.trOver.trSelected td,.flexigrid tr.trSelected td.sorted,.flexigrid tr.trSelected td
+{
+    background: #ff6666;
 }

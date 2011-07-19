@@ -56,15 +56,10 @@ class ZendExt_Acl extends Zend_Acl {
                 ->add(new Zend_Acl_Resource('asset:history'), 'asset')
                 ->add(new Zend_Acl_Resource('asset:item'), 'asset')
                 ->add(new Zend_Acl_Resource('asset:loan'), 'asset')
+                ->add(new Zend_Acl_Resource('asset:message'), 'asset')
                 ->add(new Zend_Acl_Resource('asset:request'), 'asset')
                 ->add(new Zend_Acl_Resource('asset:upgrade'), 'asset');
 
-//        $this->allow('users', 'user:login', array('success', 'logout'))
-//                ->allow('users', 'default:comment', array('add', 'delete'))
-//                ->allow('users', 'user:profile', array('index', 'edit', 'repassword', 'chpassword'))
-//                ->deny('users', 'user:login', 'login')
-//                ->deny('users', 'admin:index', 'index')
-//                ->deny('users', 'admin');
         // Permission of NULL user
         $this->allow(NULL, 'front:index', array('about'))
                 ->allow(NULL, 'front:auth', array('login', 'logout', 'success', 'nopermission'))
@@ -75,32 +70,35 @@ class ZendExt_Acl extends Zend_Acl {
         $this->allow('IT', 'front:index', 'index')
                 ->allow('IT', 'front:mail', array('index'))
                 ->allow('IT', 'user:profile', array('detail', 'edit'))
+                ->allow('IT', 'asset:history', array('list', 'records', 'detail'))
                 ->allow('IT', 'asset:item', array('list', 'records', 'detail'))
                 ->allow('IT', 'asset:loan', array('list', 'records'))
-                ->allow('IT', 'asset:request', array('list', 'records', 'add'))
-                ->allow('IT', 'asset:upgrade', array('list', 'records', 'detail'));
+                ->allow('IT', 'asset:message', array('list', 'records', 'add', 'delete', 'read'))
+                ->allow('IT', 'asset:request', array('list', 'records', 'add', 'delete', 'accept', 'detail', 'disaccept', 'success'))
+                ->allow('IT', 'asset:upgrade', array('list', 'records', 'detail','add', 'delete'));
 
         // Permission of User user
         $this->allow('User', 'front:index', 'index')
                 ->allow('User', 'front:mail', array('index'))
                 ->allow('User', 'user:profile', array('detail', 'edit'))
+                ->allow('User', 'asset:history', array('list', 'records', 'detail'))
                 ->allow('User', 'asset:item', array('list', 'records', 'detail'))
                 ->allow('User', 'asset:loan', array('list', 'records'))
-                ->allow('User', 'asset:request', array('list', 'records', 'add'))
-                ->allow('User', 'asset:upgrade', array('list', 'records','detail'));
-        
+                ->allow('User', 'asset:message', array('list', 'records', 'add', 'delete', 'read'))
+                ->allow('User', 'asset:request', array('list', 'records', 'add', 'detail'))
+                ->allow('User', 'asset:upgrade', array('list', 'records', 'detail'));
+
         // Permission of Admin
-        $this->allow('Admin', 'user:user', array('list', 'records', 'edit'))
+        $this->allow('Admin', 'user:user', array('list', 'records', 'edit', 'detail'))
                 ->allow('Admin', 'asset:history', array('list', 'records', 'detail'))
                 ->allow('Admin', 'asset:item', array('list', 'records', 'detail', 'edit'))
                 ->allow('Admin', 'asset:loan', array('list', 'records', 'add', 'delete'))
-                ->allow('Admin', 'asset:request', array('list', 'records', 'detail', 'add', 'delete', 'accept', 'disaccept'))
+                ->allow('Admin', 'asset:request', array('list', 'records', 'add', 'delete', 'accept', 'detail', 'disaccept'))
                 ->allow('Admin', 'asset:upgrade', array('list', 'records', 'add', 'delete', 'detail'));
-        
-        // Permission of SuperAdmin
-        $this->allow('SuperAdmin', 'user:user', array('list', 'records', 'edit', 'add', 'delete'))
-                ->allow('SuperAdmin', 'asset:item', array('list', 'records', 'detail', 'edit', 'add', 'delete'));
 
+        // Permission of SuperAdmin
+        $this->allow('SuperAdmin', 'user:user', array('list', 'records', 'edit', 'add', 'delete', 'detail'))
+                ->allow('SuperAdmin', 'asset:item', array('list', 'records', 'detail', 'edit', 'add', 'delete'));
     }
 
 }
