@@ -12,19 +12,10 @@ $this->headLink()
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
 $this->headScript()
         ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+// othermode
+$this->pagetitle = 'Quản lý cho mượn tài sản';
+$urlRecords = $this->url(array('module' => 'asset', 'controller' => 'loan', 'action' => 'records', 'mode' => 1));
 
-switch ($this->mode) {
-    case 1:
-        $this->pagetitle = 'Tất cả tài sản đang cho mượn';
-        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'loan', 'action' => 'records', 'mode' => 1));
-        break;
-    case 2:
-    default :
-        // othermode
-        $this->pagetitle = 'Tất cả tài sản bạn đang mượn';
-        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'loan', 'action' => 'records', 'mode' => 2));
-        break;
-}
 $uRole = Zend_Auth::getInstance()->getIdentity()->Role;
 ?>
 
@@ -49,11 +40,11 @@ $uRole = Zend_Auth::getInstance()->getIdentity()->Role;
             url : '<?php echo $urlRecords; ?>',
             dataType : 'json',
             colModel : [ 
-                {display: 'Ma tai san', name: 'Ma_tai_san', width: 100, sortable: true, align: 'left'},
-                {display: 'Ten tai san', name: 'Ten_tai_san', width: 150, sortable: false, align: 'left'},
-                {display: 'Username', name: 'Username', width: 100, sortable: false, align: 'left'},
-                {display: 'Detail', name: 'Detail', width: 350, sortable: true, align: 'left'},
-                {display: 'Date', name: 'Date', width: 100, sortable: true, align: 'left'}
+                {display: 'Mã TS', name: 'Ma_tai_san', width: 100, sortable: true, align: 'left'},
+                {display: 'Tên tài sản', name: 'Ten_tai_san', width: 150, sortable: false, align: 'left'},
+                {display: 'Người mượn', name: 'Username', width: 100, sortable: false, align: 'left'},
+                {display: 'Chi tiết', name: 'Detail', width: 350, sortable: true, align: 'left'},
+                {display: 'Ngày mượn', name: 'Date', width: 100, sortable: true, align: 'left'}
             ],
             buttons : [ 
 <?php if ($uRole == 0 || $uRole == 1): ?>
@@ -65,160 +56,162 @@ $uRole = Zend_Auth::getInstance()->getIdentity()->Role;
             ],
 
             searchitems : [ 
-                {display : 'Ma tai san', name : 'Ma_tai_san', isdefault : true },
-                {display : 'User ID', name : 'UserID' },
-                {display : 'Date', name : 'Date' },
+                {display : 'Mã TS', name : 'Ma_tai_san', isdefault : true },
+                {display : 'Tên tài sản', name : 'Tên tài sản' },
+                {display : 'Người mượn', name : 'Username' },
+                {display : 'Ngày mượn', name : 'Date' },
             ],
-            sortname : "UserID",
+            sortname : "Ma_tai_san",
             sortorder : "asc",
             usepager : true,
-            title : 'Loan Table',
+            title : 'Bảng cho mượn',
             useRp : true,
             rp : 15,
+            singleSelect : true,
             showTableToggleBtn : true,
             width : 1080,
             height : 250
         });
         function detail_record(command,grid){} // detail_record
 <?php if ($uRole == 0 || $uRole == 1): ?>
-                    function add_record() { 
-                        $("#dialog-form").attr('title', 'Create new item');
-                        $("#dialog-form").dialog({
-                            autoOpen: false,
-                            height: 550,
-                            width: 400,
-                            modal: true,
-                            buttons: {
-                                "Cho muon": function() {
-                                    var bValid = true;
-                                    allFields.removeClass( "ui-state-error" );
-                                    bValid = bValid && checkLength( uname, "username", 3, 16 );
+            function add_record() { 
+                $("#dialog-form").attr('title', 'Create new item');
+                $("#dialog-form").dialog({
+                    autoOpen: false,
+                    height: 550,
+                    width: 400,
+                    modal: true,
+                    buttons: {
+                        "Cho muon": function() {
+                            var bValid = true;
+                            allFields.removeClass( "ui-state-error" );
+                            bValid = bValid && checkLength( uname, "username", 3, 16 );
 
-                                    bValid = bValid && checkRegexp( uname, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
+                            bValid = bValid && checkRegexp( uname, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
 
-                                    if ( bValid ) {
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "/QLTSv1/asset/loan/add",
-                                            data: "MaTS="+maTS.val()+"&Username="+uname.val()+"&Detail="+detail.val()+"&Place="+place.val(),
-                                            success: function (data){
-                                                var getData = $.parseJSON(data);
-                                                var tag = $("<div title='"+getData.status+"'></div>");
-                                                tag.html("<span>"+getData.msg+"</span>").dialog({
-                                                    resizable: false,
-                                                    height:200,
-                                                    width: 300,
-                                                    modal: true,
-                                                    buttons: {
-                                                        "OK": function() {
-                                                            $('.gridTable').flexReload();
-                                                            $( this ).dialog( "close" );
-                                                        }
-                                                    }
-                                                }).dialog("open");
+                            if ( bValid ) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/QLTSv1/asset/loan/add",
+                                    data: "MaTS="+maTS.val()+"&Username="+uname.val()+"&Detail="+detail.val()+"&Place="+place.val(),
+                                    success: function (data){
+                                        var getData = $.parseJSON(data);
+                                        var tag = $("<div title='"+getData.status+"'></div>");
+                                        tag.html("<span>"+getData.msg+"</span>").dialog({
+                                            resizable: false,
+                                            height:200,
+                                            width: 300,
+                                            modal: true,
+                                            buttons: {
+                                                "OK": function() {
+                                                    $('.gridTable').flexReload();
+                                                    $( this ).dialog( "close" );
+                                                }
                                             }
-                                        });
-                                        $( this ).dialog( "close" );      
+                                        }).dialog("open");
                                     }
-                                        
-                                },
-                                Cancel: function() {
-                                    $( this ).dialog( "close" );
-                                }
-                            },
-                            close: function() {
-                                allFields.val( "" ).removeClass( "ui-state-error" );
+                                });
+                                $( this ).dialog( "close" );      
                             }
-                        });
-                        $( "#dialog-form" ).dialog( "open" );  
-                    }
-        
-                    function delete_record(command,grid)
-                    {
-                        var record_count = $('.trSelected',grid).length;
-                        if (0 == record_count)
-                        {
-                            alert('Please select a record first by clicking on the appropriate row.');
-                            return;
+                                            
+                        },
+                        Cancel: function() {
+                            $( this ).dialog( "close" );
                         }
-                        $('.trSelected',grid).each(function(){
-                            var id = this.id.substr(3);
-                            $( "#dialog-confirm" ).dialog({
-                                resizable: false,
-                                height:200,
-                                width:500,
-                                modal: true,
-                                buttons: {
-                                    "Delete" : function() {
-                                        $.ajax({
-                                            type: "POST",
-                                            url: '/QLTSv1/asset/loan/delete',
-                                            data: 'MaTS='+id,
-                                            success: function (data){
-                                                alert(data);
-                                                var getData = $.parseJSON(data);
-                                                var tag = $("<div title='"+getData.status+"'></div>");
-                                                tag.html("<span>"+getData.msg+"</span>").dialog({
-                                                    resizable: false,
-                                                    height:200,
-                                                    width: 300,
-                                                    modal: true,
-                                                    buttons: {
-                                                        "OK": function() {
-                                                            $('.gridTable').flexReload();
-                                                            $( this ).dialog( "close" );
-                                                        }
-                                                    }
-                                                }).dialog("open");
-                                            }
-                                        });
-                                        $( this ).dialog( "close" );
-                                    },
-                                    Cancel: function() {
-                                        $( this ).dialog( "close" );
-                                    }
-                                }
-                            });
-                        });
-                    } // delete_record
-
-                    /////////////////
-                    var tips = $(".validateTips");
-                    var maTS = $("#MaTS"),
-                    uname = $("#Username"),
-                    detail = $("#Detail"),
-                    place = $("#Place"),
-                    allFields = $( [] ).add(maTS).add(uname).add(detail).add(place);
-                    function updateTips( t ) {
-                        tips
-                        .text( t )
-                        .addClass( "ui-state-highlight" );
-                        setTimeout(function() {
-                            tips.removeClass( "ui-state-highlight", 1500 );
-                        }, 500 );
+                    },
+                    close: function() {
+                        allFields.val( "" ).removeClass( "ui-state-error" );
                     }
-
-                    function checkLength( o, n, min, max ) {
-                        if ( o.val().length > max || o.val().length < min ) {
-                            o.addClass( "ui-state-error" );
-                            updateTips( "Length of " + n + " must be between " +
-                                min + " and " + max + "." );
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    function checkRegexp( o, regexp, n ) {
-                        if ( !( regexp.test( o.val() ) ) ) {
-                            o.addClass( "ui-state-error" );
-                            updateTips( n );
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-                    <?php endif; ?>
                 });
+                $( "#dialog-form" ).dialog( "open" );  
+            }
+            
+            function delete_record(command,grid)
+            {
+                var record_count = $('.trSelected',grid).length;
+                if (0 == record_count)
+                {
+                    alert('Please select a record first by clicking on the appropriate row.');
+                    return;
+                }
+                $('.trSelected',grid).each(function(){
+                    var id = this.id.substr(3);
+                    $( "#dialog-confirm" ).dialog({
+                        resizable: false,
+                        height:200,
+                        width:500,
+                        modal: true,
+                        buttons: {
+                            "Delete" : function() {
+                                $.ajax({
+                                    type: "POST",
+                                    url: '/QLTSv1/asset/loan/delete',
+                                    data: 'MaTS='+id,
+                                    success: function (data){
+                                        alert(data);
+                                        var getData = $.parseJSON(data);
+                                        var tag = $("<div title='"+getData.status+"'></div>");
+                                        tag.html("<span>"+getData.msg+"</span>").dialog({
+                                            resizable: false,
+                                            height:200,
+                                            width: 300,
+                                            modal: true,
+                                            buttons: {
+                                                "OK": function() {
+                                                    $('.gridTable').flexReload();
+                                                    $( this ).dialog( "close" );
+                                                }
+                                            }
+                                        }).dialog("open");
+                                    }
+                                });
+                                $( this ).dialog( "close" );
+                            },
+                            Cancel: function() {
+                                $( this ).dialog( "close" );
+                            }
+                        }
+                    });
+                });
+            } // delete_record
+
+            /////////////////
+            var tips = $(".validateTips");
+            var maTS = $("#MaTS"),
+            uname = $("#Username"),
+            detail = $("#Detail"),
+            place = $("#Place"),
+            allFields = $( [] ).add(maTS).add(uname).add(detail).add(place);
+            function updateTips( t ) {
+                tips
+                .text( t )
+                .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            }
+
+            function checkLength( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function checkRegexp( o, regexp, n ) {
+                if ( !( regexp.test( o.val() ) ) ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( n );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+<?php endif; ?>
+                        });
 
 </script>

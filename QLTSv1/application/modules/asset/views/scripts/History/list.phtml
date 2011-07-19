@@ -18,29 +18,30 @@ $this->pagetitle = 'Lịch sử mượn và trả tài sản';
             dataType : 'json',
             colModel : [ 
                 //                {display: 'Item ID', name: 'ItemID', width: 50, sortable: true, align: 'left'},
-                {display: 'Ma tai san', name: 'Ma_tai_san', width: 70, sortable: true, align: 'left'},
-                {display: 'Ten tai san', name: 'Ten_tai_san', width: 100, sortable: false, align: 'left'},
-                {display: 'Nguoi ban giao', name: 'LUsername', width: 100, sortable: true, align: 'left'},
-                {display: 'Nguoi nhan', name: 'RUsername', width: 100, sortable: true, align: 'left'},
-                {display: 'Date', name: 'Date', width: 70, sortable: true, align: 'left'},
-                {display: 'Detail', name: 'Detail', width: 300, sortable: false, align: 'left'},
+                {display: 'Mã TS', name: 'Ma_tai_san', width: 70, sortable: true, align: 'left'},
+                {display: 'Tên tài sản', name: 'Ten_tai_san', width: 100, sortable: false, align: 'left'},
+                {display: 'Người bàn giao', name: 'LUsername', width: 100, sortable: true, align: 'left'},
+                {display: 'Người nhận', name: 'RUsername', width: 100, sortable: true, align: 'left'},
+                {display: 'Ngày bàn giao', name: 'Date', width: 70, sortable: true, align: 'left'},
+                {display: 'Chi tiết bàn giao', name: 'Detail', width: 300, sortable: false, align: 'left'},
             ],
             buttons : [ 
-                {name : 'Detail', bclass : 'detail', onpress : detail_record},
-                {name : 'Find as date', bclass : 'search', onpress : date_search}
+                {name : 'Detail', bclass : 'detail', onpress : detail_record}
+//                {name : 'Find as date', bclass : 'search', onpress : date_search}
             ],
             searchitems : [ 
-                {display : 'ItemID', name : 'ItemID', isdefault : true },
-                {display : 'Date', name : 'Date' },
-                {display : 'Nguoi ban giao', name : 'LUserID' },
-                {display : 'Nguoi nhan', name : 'RUserID' },
+                {display : 'Mã tài sản', name : 'Ma_tai_san', isdefault : true },
+                {display : 'Ngày bàn giao', name : 'Date' },
+                {display : 'Người bàn giao', name : 'LUserID' },
+                {display : 'Người nhận', name : 'RUserID' },
             ],
             sortname : "ItemID",
             sortorder : "asc",
             usepager : true,
-            title : 'History Table',
+            title : 'Bảng lịch sử bàn giao',
             useRp : true,
             rp : 15,
+            singleSelect : true,
             showTableToggleBtn : true,
             width : 1080,
             height : 250
@@ -106,8 +107,8 @@ $this->pagetitle = 'Lịch sử mượn và trả tài sản';
                 });
             });
         } // detail_record
-        function date_search(command,grid){
-        
-        } // date_search
+//        function date_search(command,grid){
+//        
+//        } // date_search
     });
 </script>

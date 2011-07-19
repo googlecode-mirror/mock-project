@@ -58,8 +58,7 @@ class Front_AuthController extends Zend_Controller_Action {
                     } else {
                         // login successfully
                         $this->_helper->getHelper('FlashMessenger')->addMessage('You were successfully logged in.');
-                        //                        $this->_redirect('/user/' . Zend_Auth::getInstance()->getIdentity()->username);
-                        $this->_redirect('/front/auth/success');
+                        $this->_redirect('/front/index/index');
                     }
                 }
             }
@@ -69,11 +68,12 @@ class Front_AuthController extends Zend_Controller_Action {
     }
 
     public function successAction() {
-        if ($this->_helper->getHelper('FlashMessenger')->getMessages()) {
-            $this->view->messages = $this->_helper->getHelper('FlashMessenger')->getMessages();
-        } else {
-            $this->_redirect('/front/index/index');
-        }
+        $this->_redirect('/front/index/index');
+//        if ($this->_helper->getHelper('FlashMessenger')->getMessages()) {
+//            $this->view->messages = $this->_helper->getHelper('FlashMessenger')->getMessages();
+//        } else {
+//            $this->_redirect('/front/index/index');
+//        }
     }
 
     public function logoutAction() {
@@ -100,8 +100,8 @@ class Front_AuthController extends Zend_Controller_Action {
     }
 
     private function encodePassword($passwd) {
-//        return hash('sha256', 'hedspi' . $passwd . 'isk52');
-        return $passwd;
+        return hash('sha256', 'hedspi' . $passwd . 'isk52');
+//        return $passwd;
     }
 
 }

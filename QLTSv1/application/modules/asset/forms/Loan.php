@@ -13,7 +13,7 @@ class Asset_Form_Loan extends Zend_Form {
 
         $maTS = new Zend_Form_Element_Text('MaTS');
         $maTS->setOptions(array(
-                    'label' => 'Ma Tai San',
+                    'label' => 'Mã TS',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -24,7 +24,7 @@ class Asset_Form_Loan extends Zend_Form {
 
         $Username = new Zend_Form_Element_Text('Username');
         $Username->setOptions(array(
-                    'label' => 'Username',
+                    'label' => 'Người mượn',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -35,7 +35,7 @@ class Asset_Form_Loan extends Zend_Form {
 
         $detail = new Zend_Form_Element_Textarea('Detail');
         $detail->setOptions(array(
-                    'label' => 'Detail',
+                    'label' => 'Chi tiết',
                     'style' => "width: 200px; height: 100px"
                 ))
                 ->setDecorators(array(
@@ -45,7 +45,7 @@ class Asset_Form_Loan extends Zend_Form {
 
         $place = new Zend_Form_Element_Textarea('Place');
         $place->setOptions(array(
-                    'label' => 'Place',
+                    'label' => 'Địa điểm',
                     'style' => "width: 200px; height: 100px"
                 ))
                 ->setDecorators(array(

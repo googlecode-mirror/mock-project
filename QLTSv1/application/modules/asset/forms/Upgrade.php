@@ -18,7 +18,7 @@ class Asset_Form_Upgrade extends Zend_Form {
         
         $maTS = new Zend_Form_Element_Text('MaTS');
         $maTS->setOptions(array(
-                    'label' => 'Ma Tai San',
+                    'label' => 'Mã TS',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -29,7 +29,7 @@ class Asset_Form_Upgrade extends Zend_Form {
 
         $Username = new Zend_Form_Element_Text('Username');
         $Username->setOptions(array(
-                    'label' => 'Username',
+                    'label' => 'Người sử dụng',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -40,7 +40,7 @@ class Asset_Form_Upgrade extends Zend_Form {
 
         $Manager = new Zend_Form_Element_Text('Manager');
         $Manager->setOptions(array(
-                    'label' => 'Manager',
+                    'label' => 'Người nâng cấp',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -51,7 +51,7 @@ class Asset_Form_Upgrade extends Zend_Form {
 
         $date = new Zend_Form_Element_Text('Date');
         $date->setOptions(array(
-                    'label' => 'Date',
+                    'label' => 'Ngày nâng cấp',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -62,7 +62,7 @@ class Asset_Form_Upgrade extends Zend_Form {
 
         $detail = new Zend_Form_Element_Textarea('Detail');
         $detail->setOptions(array(
-                    'label' => 'Detail',
+                    'label' => 'Chi tiết nâng cấp',
                     'style' => "width: 200px; height: 100px"
                 ))
                 ->setDecorators(array(

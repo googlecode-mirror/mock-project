@@ -1,0 +1,394 @@
+<?php
+$this->jQuery()->enable()->uiEnable();
+$this->headLink()
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
+$this->headScript()
+        ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+switch ($this->mode) {
+    case 1:
+        $this->pagetitle = 'Tất cả các yêu cầu';
+        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'records', 'mode' => 1));
+        break;
+    case 2:
+        $this->pagetitle = 'Tất cả các yêu cầu chưa xử lý xong';
+        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'records', 'mode' => 2));
+        break;
+    case 3:
+    default :
+        // othermode
+        $this->pagetitle = 'Tất cả các yêu cầu của bạn';
+        $urlRecords = $this->url(array('module' => 'asset', 'controller' => 'request', 'action' => 'records', 'mode' => 3));
+        break;
+}
+$uRole = Zend_Auth::getInstance()->getIdentity()->Role;
+?>
+
+<table class='gridTable' style="display:none"></table>
+
+<div id="dialog-form" style="display: none">
+    <p class="validateTips">All form fields are required.</p>
+    <?php echo $this->form; ?>
+</div>
+
+
+<div id="dialog-confirm" title="Delete confirm?" style="display: none">
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+        Information of item will be permanently deleted and cannot be recovered. Are you sure?
+    </p>
+</div>
+<?php if ($uRole == 0 || $uRole == 1): ?>
+    <div id="dialog-confirm1" title="Accept confirm?" style="display: none">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+            Ban dong y cho muon ???
+        </p>
+    </div>
+    <div id="dialog-confirm2" title="Desaccept confirm?" style="display: none">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+            Ban tu choi cho muon ???
+        </p>
+    </div>
+<?php endif; ?>
+<script type="text/javascript">
+    <!--
+    $(document).ready(function(){
+        
+        $('.gridTable').flexigrid({
+            url : '<?php echo $urlRecords; ?>',
+            dataType : 'json',
+            colModel : [ 
+                {display: 'Người yêu cầu', name: 'Username', width: 100, sortable: true, align: 'left'},
+                {display: 'Mã TS', name: 'Ma_tai_san', width: 70, sortable: true, align: 'left'},
+                {display: 'Tên tài sản', name: 'TenTS', width: 200, sortable: false, align: 'left'},
+                {display: 'Loại yêu cầu', name: 'Type', width: 100, sortable: true, align: 'left'},
+                {display: 'Ngày yêu cầu', name: 'Date', width: 70, sortable: true, align: 'left'},
+                {display: 'Chi tiết yêu cầu', name: 'Detail', width: 300, sortable: false, align: 'left'},
+            ],
+            buttons : [ 
+                {name : 'Add', bclass : 'add', onpress : add_record},
+<?php if ($uRole == 0 || $uRole == 1) : ?>
+                    {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
+                    {separator : true},
+                    {name : 'Accept', bclass : 'accept', onpress : accept_record},
+                    {name : 'Disaccept', bclass : 'disaccept', onpress : disaccept_record},
+<?php endif; ?>
+                {separator : true},
+                {name : 'Detail', bclass : 'detail', onpress : detail_record}
+            ],
+            searchitems : [ 
+                {display : 'Ma tai san', name : 'Ma_tai_san', isdefault : true },
+                {display : 'Ten tai san', name : 'TenTS' },
+                {display : 'Nguoi yeu cau', name : 'Username' },
+                {display : 'Date', name : 'Date' }
+            ],
+            sortname : "RequestID",
+            sortorder : "asc",
+            usepager : true,
+            title : 'Bảng yêu cầu',
+            useRp : true,
+            rp : 15,
+            singleSelect : true,
+            showTableToggleBtn : true,
+            width : 1080,
+            height : 250
+        });
+        
+        function detail_record(command,grid){
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Please select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                //            window.location = '/QLTSv1/user/user/detail/UserID/'+id;
+                $.ajax({
+                    type: "POST",
+                    url: "/QLTSv1/asset/request/detail",
+                    data: "RequestID="+id,
+                    success: function(data) {
+                        //                        alert(data);
+                        var getData = $.parseJSON(data);
+                        if(getData.status == 'success'){
+                            // get user info success
+                            var tag = $("<div title='Request\'s information'></div>");
+                            tag.html(
+                            '<table><tr><td>Ma tai san</td><td>:</td><td>'+getData.data.Ma_tai_san+
+                                '</td></tr><tr><td>Ten tai san</td><td>:</td><td>'+getData.data.TenTS+
+                                '</td></tr><tr><td>Nguoi yeu cau</td><td>:</td><td>'+getData.data.Username+
+                                '</td></tr><tr><td>Type</td><td>:</td><td>'+getData.data.Type+
+                                '</td></tr><tr><td>Date</td><td>:</td><td>'+getData.data.Date+
+                                '</td></tr><tr><td>Detail</td><td>:</td><td>'+getData.data.Detail+
+                                '</td></tr><tr><td>Accept</td><td>:</td><td>'+getData.data.Accept+
+                                '</td></tr></table>'
+                        ).dialog({
+                                resizable: false,
+                                height:350,
+                                width: 300,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }else{
+                            // get user info error
+                            var tag = $("<div title='Error'></div>");
+                            tag.html("<span>"+getData.msg+"</span>").dialog({
+                                resizable: false,
+                                height:350,
+                                width: 450,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }
+                    
+                    
+                    }
+                });
+            });
+        } // detail_record
+        
+        function add_record() {
+            $("#dialog-form").attr('title', 'Create new request');
+            $("#dialog-form").dialog({
+                autoOpen: false,
+                height: 350,
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Create a request": function() {
+                        var bValid = true;
+                        allFields.removeClass( "ui-state-error" );
+                        if ( bValid ) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/QLTSv1/asset/request/add",
+                                data: "RequestID="+requestid.val()+"&MaTS="+maTS.val()+"&Type="+utype.val()+"&Date="+udate.val()+"&Detail="+udetail.val(),
+                                success: function (data){
+                                    var getData = $.parseJSON(data);
+                                    var tag = $("<div title='"+getData.status+"'></div>");
+                                    tag.html("<span>"+getData.msg+"</span>").dialog({
+                                        resizable: false,
+                                        height:200,
+                                        width: 300,
+                                        modal: true,
+                                        buttons: {
+                                            "OK": function() {
+                                                $('.gridTable').flexReload();
+                                                $( this ).dialog( "close" );
+                                            }
+                                        }
+                                    }).dialog("open");
+                                }
+                            });
+                            $( this ).dialog( "close" );      
+                        }
+                                            
+                    },
+                    Cancel: function() {
+                        $( this ).dialog( "close" );
+                    }
+                },
+                close: function() {
+                    allFields.val( "" ).removeClass( "ui-state-error" );
+                }
+            });
+            $( "#dialog-form" ).dialog( "open" );
+        } // add_record
+<?php if ($uRole == 0 || $uRole == 1): ?>
+                                function delete_record(command,grid)
+                                {
+                                    var record_count = $('.trSelected',grid).length;
+                                    if (0 == record_count)
+                                    {
+                                        alert('Please select a record first by clicking on the appropriate row.');
+                                        return;
+                                    }
+                                    $('.trSelected',grid).each(function(){
+                                        var id = this.id.substr(3);
+                                        $( "#dialog-confirm" ).dialog({
+                                            resizable: false,
+                                            height:200,
+                                            width:500,
+                                            modal: true,
+                                            buttons: {
+                                                "Delete" : function() {
+                            
+                                                    $.ajax({
+                                                        type: "POST",
+                                                        url: '/QLTSv1/asset/request/delete',
+                                                        data: 'RequestID='+id,
+                                                        success: function (data){
+                                                            var getData = $.parseJSON(data);
+                                                            var tag = $("<div title='"+getData.status+"'></div>");
+                                                            tag.html("<span>"+getData.msg+"</span>").dialog({
+                                                                resizable: false,
+                                                                height:200,
+                                                                width: 300,
+                                                                modal: true,
+                                                                buttons: {
+                                                                    "OK": function() {
+                                                                        $('.gridTable').flexReload();
+                                                                        $( this ).dialog( "close" );
+                                                                    }
+                                                                }
+                                                            }).dialog("open");
+                                                        }
+                                                    });
+                                                    $( this ).dialog( "close" );
+                                                },
+                                                Cancel: function() {
+                                                    $( this ).dialog( "close" );
+                                                }
+                                            }
+                                        });
+                                    });
+                                } // delete_record
+            
+                                function accept_record(command,grid){
+                                    var record_count = $('.trSelected',grid).length;
+                                    if (0 == record_count)
+                                    {
+                                        alert('Please select a record first by clicking on the appropriate row.');
+                                        return;
+                                    }
+                                    $('.trSelected',grid).each(function(){
+                                        var id = this.id.substr(3);
+                                        $( "#dialog-confirm1" ).dialog({
+                                            resizable: false,
+                                            height:200,
+                                            width:500,
+                                            modal: true,
+                                            buttons: {
+                                                "Accept" : function() {
+                                
+                                                    $.ajax({
+                                                        type: "POST",
+                                                        url: '/QLTSv1/asset/request/accept',
+                                                        data: 'RequestID='+id,
+                                                        success: function (data){
+                                                            var getData = $.parseJSON(data);
+                                                            var tag = $("<div title='"+getData.status+"'></div>");
+                                                            tag.html("<span>"+getData.msg+"</span>").dialog({
+                                                                resizable: false,
+                                                                height:200,
+                                                                width: 300,
+                                                                modal: true,
+                                                                buttons: {
+                                                                    "OK": function() {
+                                                                        $('.gridTable').flexReload();
+                                                                        $( this ).dialog( "close" );
+                                                                    }
+                                                                }
+                                                            }).dialog("open");
+                                                        }
+                                                    });
+                                                    $( this ).dialog( "close" );
+                                                },
+                                                Cancel: function() {
+                                                    $( this ).dialog( "close" );
+                                                }
+                                            }
+                                        });
+                                    });
+                                } // accept_record
+            
+                                function disaccept_record(command,grid){
+                                    var record_count = $('.trSelected',grid).length;
+                                    if (0 == record_count)
+                                    {
+                                        alert('Please select a record first by clicking on the appropriate row.');
+                                        return;
+                                    }
+                                    $('.trSelected',grid).each(function(){
+                                        var id = this.id.substr(3);
+                                        $( "#dialog-confirm2" ).dialog({
+                                            resizable: false,
+                                            height:200,
+                                            width:500,
+                                            modal: true,
+                                            buttons: {
+                                                "Disaccept" : function() {
+                                
+                                                    $.ajax({
+                                                        type: "POST",
+                                                        url: '/QLTSv1/asset/request/disaccept',
+                                                        data: 'RequestID='+id,
+                                                        success: function (data){
+                                                            var getData = $.parseJSON(data);
+                                                            var tag = $("<div title='"+getData.status+"'></div>");
+                                                            tag.html("<span>"+getData.msg+"</span>").dialog({
+                                                                resizable: false,
+                                                                height:200,
+                                                                width: 300,
+                                                                modal: true,
+                                                                buttons: {
+                                                                    "OK": function() {
+                                                                        $('.gridTable').flexReload();
+                                                                        $( this ).dialog( "close" );
+                                                                    }
+                                                                }
+                                                            }).dialog("open");
+                                                        }
+                                                    });
+                                                    $( this ).dialog( "close" );
+                                                },
+                                                Cancel: function() {
+                                                    $( this ).dialog( "close" );
+                                                }
+                                            }
+                                        });
+                                    });
+                                } // disaccept_record
+<?php endif; ?>
+                                                    //////////////////////////////////
+                                                    var tips = $(".validateTips");
+                                                    var requestid = $("#RequestID"),
+                                                    maTS = $("#MaTS"),
+                                                    utype = $("#Type"),
+                                                    udate = $("#Date"),
+                                                    udetail = $("#Detail"),
+                                                    allFields = $( [] ).add(requestid).add(maTS).add(utype).add(udate).add(udetail);
+                            
+                                                    function updateTips( t ) {
+                                                        tips
+                                                        .text( t )
+                                                        .addClass( "ui-state-highlight" );
+                                                        setTimeout(function() {
+                                                            tips.removeClass( "ui-state-highlight", 1500 );
+                                                        }, 500 );
+                                                    }
+
+                                                    function checkLength( o, n, min, max ) {
+                                                        if ( o.val().length > max || o.val().length < min ) {
+                                                            o.addClass( "ui-state-error" );
+                                                            updateTips( "Length of " + n + " must be between " +
+                                                                min + " and " + max + "." );
+                                                            return false;
+                                                        } else {
+                                                            return true;
+                                                        }
+                                                    }
+
+                                                    function checkRegexp( o, regexp, n ) {
+                                                        if ( !( regexp.test( o.val() ) ) ) {
+                                                            o.addClass( "ui-state-error" );
+                                                            updateTips( n );
+                                                            return false;
+                                                        } else {
+                                                            return true;
+                                                        }
+                                                    }
+                                                });
+                                                -->
+</script>

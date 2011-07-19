@@ -12,7 +12,7 @@ $this->headLink()
         ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
 $this->headScript()
         ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
-$this->pagetitle = 'Quản lý thành viên';
+$this->pagetitle = 'Quản lý tài khoản';
 ?>
 
 <table class='tableMembers' style="display:none"></table>
@@ -38,7 +38,7 @@ $this->pagetitle = 'Quản lý thành viên';
             colModel : [ 
                 {display: 'Username', name: 'Username', width: 80, sortable: true, align: 'left'},
                 {display: 'Full Name', name: 'FullName', width: 120, sortable: true, align: 'left'},
-                {display: 'Role', name: 'Role', width: 50, sortable: false, align: 'left'},
+                {display: 'User Type', name: 'Role', width: 70, sortable: false, align: 'left'},
                 {display: 'Email', name: 'Email', width: 120, sortable: true, align: 'left'},
                 {display: 'Birthday', name: 'Birthday', width: 70, sortable: true, align: 'left'},
                 {display: 'Group', name: 'Group', width: 70, sortable: true, align: 'left'},
@@ -64,6 +64,7 @@ $this->pagetitle = 'Quản lý thành viên';
             useRp : true,
             rp : 15,
             showTableToggleBtn : true,
+            singleSelect : true,
             width : 1000,
             height : 250
         });
@@ -90,7 +91,7 @@ $this->pagetitle = 'Quản lý thành viên';
                             $.ajax({
                                 type: "POST",
                                 url: "/QLTSv1/user/user/add",
-                                data: "UserID="+userid.val()+"&Username="+username.val()+"&FullName="+fullname.val()+"&Role="+role.val()+"&Email="+email.val()+"&Group="+group.val()+"&Phone="+phone.val()+"&Address="+address.val(),
+                                data: "UserID="+userid.val()+"&Username="+username.val()+"&FullName="+fullname.val()+"&Role="+role.val()+"&Email="+email.val()+"&Birthday="+birthday.val()+"&Group="+group.val()+"&Phone="+phone.val()+"&Address="+address.val(),
                                 success: function (data){
                                     var getData = $.parseJSON(data);
                                     var tag = $("<div title='"+getData.status+"'></div>");
@@ -188,7 +189,6 @@ $this->pagetitle = 'Quản lý thành viên';
                     url: "/QLTSv1/user/user/detail",
                     data: "UserID="+id,
                     success: function(data) {
-                        //                        alert(data);
                         var getData = $.parseJSON(data);
                         if(getData.status == 'success'){
                             // get user info success
@@ -197,6 +197,7 @@ $this->pagetitle = 'Quản lý thành viên';
                             $("#FullName").attr('value', getData.data.FullName);
                             $("#Role").attr('value', getData.data.Role);
                             $("#Email").attr('value', getData.data.Email);
+                            $("#Birthday").attr('value', getData.data.Birthday);
                             $("#Group").attr('value', getData.data.Group);
                             $("#Phone").attr('value', getData.data.Phone);
                             $("#Address").attr('value', getData.data.Address);
@@ -336,6 +337,7 @@ $this->pagetitle = 'Quản lý thành viên';
             });
         } // detail_record
         
+        $( "#Birthday" ).datepicker({ dateFormat: 'yy-mm-dd' });
         //////////////////////////////////
         var tips = $(".validateTips");
         var userid = $("#UserID"),
@@ -343,6 +345,7 @@ $this->pagetitle = 'Quản lý thành viên';
         fullname = $("#FullName"),
         role = $("#Role"),
         email = $("#Email"),
+        birthday = $("#Birthday"),
         group = $("#Group"),
         phone = $("#Phone"),
         address = $("#Address"),

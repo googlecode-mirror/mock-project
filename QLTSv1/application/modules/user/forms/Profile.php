@@ -25,6 +25,11 @@ class User_Form_Profile extends Zend_Form {
             'label' => 'Password',
             'required' => TRUE
         ));
+        $repassword = new Zend_Form_Element_Password('RePassword');
+        $repassword->setOptions(array(
+            'label' => 'Retype Password',
+            'required' => TRUE
+        ));
 
         $role = new Zend_Form_Element_Hidden('Role');
 
@@ -37,6 +42,11 @@ class User_Form_Profile extends Zend_Form {
         $email->setOptions(array(
             'label' => 'Email',
             'required' => TRUE
+        ));
+
+        $birthday = new Zend_Form_Element_Text("Birthday");
+        $birthday->setOptions(array(
+            'label' => 'Birthday'
         ));
 
         $group = new Zend_Form_Element_Text('Group');
@@ -59,7 +69,7 @@ class User_Form_Profile extends Zend_Form {
         $this->setName('profile-form')
                 ->setMethod(Zend_Form::METHOD_POST)
                 ->setEnctype(Zend_Form::ENCTYPE_URLENCODED)
-                ->addElements(array($userid, $username, $password, $role, $fullname, $email, $group, $phone, $address, $submit))
+                ->addElements(array($userid, $username, $password, $repassword, $role, $fullname, $email, $birthday, $group, $phone, $address, $submit))
                 ->setDecorators(array(
                     'FormElements',
                     'Errors',

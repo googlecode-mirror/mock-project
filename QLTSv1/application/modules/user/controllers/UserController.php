@@ -54,45 +54,38 @@ class User_UserController extends Zend_Controller_Action {
         $this->_helper->viewRenderer->setNoRender(true);
 
         require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
-        require_once APPLICATION_PATH . '/modules/user/forms/User.php';
-        $form = new User_Form_User();
 
         if ($this->getRequest()->isPost()) {
-            $formData = $this->getRequest()->getPost();
-            if ($form->isValid($formData)) {
-                $username = $form->getValue('Username');
-                $password = $this->encodePassword($username . '12345');
-                $role = $form->getValue('Role');
-                $fullname = $form->getValue('FullName');
-                $email = $form->getValue('Email');
-                $group = $form->getValue('Group');
-                $phone = $form->getValue('Phone');
-                $address = $form->getValue('Address');
-                $member = new User_Model_DbTable_Member();
-                $return = $member->addMember($username, $password, $role, $email, $fullname, $group, $phone, $address);
-                switch ($return) {
-                    case -1: // loi email da ton tai
-                        $status = 'error';
-                        $msg = 'Email address is exist';
-                        break;
-                    case -2: // loi user da ton tai
-                        $status = 'error';
-                        $msg = 'Username is exist';
-                        break;
-                    case 0: // loi ko add
-                        $status = 'error';
-                        $msg = 'Cannot add this user';
-                        break;
-                    case 1:
-                    default : // update thanh cong
-                        $status = 'success';
-                        $msg = 'Add user success';
+            $username = $this->getRequest()->getPost('Username');
+            $password = $this->encodePassword($username . '12345');
+            $role = $this->getRequest()->getPost('Role');
+            $fullname = $this->getRequest()->getPost('FullName');
+            $birthday = $this->getRequest()->getPost('Birthday');
+            $email = $this->getRequest()->getPost('Email');
+            $group = $this->getRequest()->getPost('Group');
+            $phone = $this->getRequest()->getPost('Phone');
+            $address = $this->getRequest()->getPost('Address');
+            $member = new User_Model_DbTable_Member();
+            $return = $member->addMember($username, $password, $role, $email, $fullname, $birthday, $group, $phone, $address);
+            switch ($return) {
+                case -1: // loi email da ton tai
+                    $status = 'error';
+                    $msg = 'Email address is exist';
+                    break;
+                case -2: // loi user da ton tai
+                    $status = 'error';
+                    $msg = 'Username is exist';
+                    break;
+                case 0: // loi ko add
+                    $status = 'error';
+                    $msg = 'Cannot add this user';
+                    break;
+                case 1:
+                default : // update thanh cong
+                    $status = 'success';
+                    $msg = 'Add user success';
 //                        $this->_redirect('/user/user/list');
-                        break;
-                }
-            } else {
-                $status = 'error';
-                $msg = 'Not found POST value';
+                    break;
             }
         } else {
             $status = 'error';
@@ -107,47 +100,46 @@ class User_UserController extends Zend_Controller_Action {
         $this->_helper->viewRenderer->setNoRender(true);
 
         require_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
-        require_once APPLICATION_PATH . '/modules/user/forms/User.php';
-        $form = new User_Form_User();
         $member = new User_Model_DbTable_Member();
         if ($this->getRequest()->isPost()) {
-            $formData = $this->getRequest()->getPost();
-            if ($form->isValid($formData)) {
-                $UserID = (int) $form->getValue('UserID');
-                $userInfor = $member->getMember($UserID);
-                $username = $form->getValue('Username');
-                $password = $userInfor['Password'];
-                $role = $form->getValue('Role');
-                $fullname = $form->getValue('FullName');
-                $email = $form->getValue('Email');
-                $group = $form->getValue('Group');
-                $phone = $form->getValue('Phone');
-                $address = $form->getValue('Address');
+            $UserID = (int) $this->getRequest()->getPost('UserID');
+            $uInfo = $member->getMember($UserID);
+            if ($uInfo == NULL) {
+                $status = 'Error';
+                $msg = 'Not found this member';
+                echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
+                exit ();
+            }
+            $username = $this->getRequest()->getPost('Username');
+            $password = $uInfo['Password'];
+            $role = $this->getRequest()->getPost('Role');
+            $fullname = $this->getRequest()->getPost('FullName');
+            $birthday = $this->getRequest()->getPost('Birthday');
+            $email = $this->getRequest()->getPost('Email');
+            $group = $this->getRequest()->getPost('Group');
+            $phone = $this->getRequest()->getPost('Phone');
+            $address = $this->getRequest()->getPost('Address');
 
-                $return = $member->editMember($UserID, $username, $password, $role, $email, $fullname, $group, $phone, $address);
-                switch ($return) {
-                    case -1: // loi email da ton tai
-                        $status = 'error';
-                        $msg = 'Email address is exist';
-                        break;
-                    case -2: // loi user da ton tai
-                        $status = 'error';
-                        $msg = 'Username is exist';
-                        break;
-                    case 0: // loi ko add
-                        $status = 'error';
-                        $msg = 'Cannot edit this user';
-                        break;
-                    case 1:
-                    default : // update thanh cong
-                        $status = 'success';
-                        $msg = 'Edit user\'s information success';
+            $return = $member->editMember($UserID, $username, $password, $role, $email, $birthday, $fullname, $group, $phone, $address);
+            switch ($return) {
+                case -1: // loi email da ton tai
+                    $status = 'error';
+                    $msg = 'Email address is exist';
+                    break;
+                case -2: // loi user da ton tai
+                    $status = 'error';
+                    $msg = 'Username is exist';
+                    break;
+                case 0: // loi ko add
+                    $status = 'error';
+                    $msg = 'Cannot edit this user';
+                    break;
+                case 1:
+                default : // update thanh cong
+                    $status = 'success';
+                    $msg = 'Edit user\'s information success';
 //                        $this->_redirect('/user/user/list');
-                        break;
-                }
-            } else {
-                $status = 'error';
-                $msg = 'Not found POST value';
+                    break;
             }
         } else {
             $status = 'error';
@@ -215,6 +207,23 @@ class User_UserController extends Zend_Controller_Action {
         foreach ($records AS $record) {
             //If cell's elements have named keys, they must match column names
             //Only cell's with named keys and matching columns are order independent.
+            switch ($record['Role']) {
+                case 0:
+                    $record['Role'] = 'SuperAdmin';
+                    break;
+                case 1:
+                    $record['Role'] = 'Admin';
+                    break;
+                case 2:
+                    $record['Role'] = 'IT';
+                    break;
+                case 3:
+                    $record['Role'] = 'User';
+                    break;
+                default :
+                    $record['Role'] = '-';
+                    break;
+            }
             $rows[] = array('id' => $record['UserID'],
                 'cell' => $record->toArray()
             );
@@ -232,7 +241,8 @@ class User_UserController extends Zend_Controller_Action {
     }
 
     private function encodePassword($passwd) {
-//        return hash('sha256', 'hedspi' . $passwd . 'isk52');
-        return $passwd;
+        return hash('sha256', 'hedspi' . $passwd . 'isk52');
+//        return $passwd;
     }
+
 }

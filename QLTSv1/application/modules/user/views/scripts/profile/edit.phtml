@@ -1,4 +1,8 @@
 <?php
+$this->jQuery()->enable()->uiEnable();
 $this->pagetitle = 'Chỉnh sửa thông tin cá nhân';
 echo $this->form;
 ?>
+<script type="text/javascript">
+$( "#Birthday" ).datepicker({ dateFormat: 'yy-mm-dd' });
+</script>
