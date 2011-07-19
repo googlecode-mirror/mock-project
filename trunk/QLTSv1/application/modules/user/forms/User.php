@@ -21,7 +21,7 @@ class User_Form_User extends Zend_Form {
         $username->setOptions(array(
                     'label' => 'Username',
                     'required' => TRUE,
-                    'filters' => array('StringTrim')
+//                    'filters' => array('StringTrim')
                 ))
                 ->setDecorators(array(
                     array('ViewHelper',
@@ -30,21 +30,21 @@ class User_Form_User extends Zend_Form {
                         array('class' => 'label'))
                 ));
 
-//        $password = new Zend_Form_Element_Password('Password');
-//        $password->setOptions(array(
-//                    'label' => 'Password',
-//                    'required' => TRUE
-//                ))
-//                ->setDecorators(array(
-//                    array('ViewHelper',
-//                        array('helper' => 'formPassword')),
-//                    array('Label',
-//                        array('class' => 'label'))
-//                ));
+        $birthday = new Zend_Form_Element_Text('Birthday');
+        $birthday->setOptions(array(
+                    'label' => 'Birthday',
+                    'required' => TRUE
+                ))
+                ->setDecorators(array(
+                    array('ViewHelper',
+                        array('helper' => 'formText')),
+                    array('Label',
+                        array('class' => 'label'))
+                ));
 
         $role = new Zend_Form_Element_Select('Role');
         $role->setOptions(array(
-                    'label' => 'Role',
+                    'label' => 'User Type',
                     'MultiOptions' => array(3 => 'User', 2 => 'IT', 1 => 'Admin', 0 => 'SuperAdmin')
                 ))
                 ->setDecorators(array(
@@ -114,7 +114,7 @@ class User_Form_User extends Zend_Form {
         $this->setName('user-form')
                 ->setMethod(Zend_Form::METHOD_POST)
                 ->setEnctype(Zend_Form::ENCTYPE_URLENCODED)
-                ->addElements(array($userid, $username, $role, $fullname, $email, $group, $phone, $address))
+                ->addElements(array($userid, $username, $role, $fullname, $email, $birthday, $group, $phone, $address))
                 ->setDecorators(array(
                     'FormElements',
                     array('HtmlTag', array('tag' => 'fieldset', 'style' => "padding: 0; border: 0; margin-top: 25px;")),

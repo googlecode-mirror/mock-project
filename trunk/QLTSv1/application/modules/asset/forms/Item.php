@@ -19,7 +19,7 @@ class Asset_Form_Item extends Zend_Form {
 
         $maTS = new Zend_Form_Element_Text('MaTS');
         $maTS->setOptions(array(
-                    'label' => 'Ma Tai San',
+                    'label' => 'Mã TS',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -30,7 +30,7 @@ class Asset_Form_Item extends Zend_Form {
 
         $tenTS = new Zend_Form_Element_Text('TenTS');
         $tenTS->setOptions(array(
-                    'label' => 'Ten Tai San',
+                    'label' => 'Tên tài sản',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -41,8 +41,8 @@ class Asset_Form_Item extends Zend_Form {
 
         $descr = new Zend_Form_Element_Textarea('Description');
         $descr->setOptions(array(
-                    'label' => 'Description',
-                    'style' => "width: 200px; height: 100px"
+                    'label' => 'Mô tả',
+                    'style' => "width: 200px; height: 50px"
                 ))
                 ->setDecorators(array(
                     array('ViewHelper', array('helper' => 'formTextarea')),
@@ -51,9 +51,9 @@ class Asset_Form_Item extends Zend_Form {
 
         $type = new Zend_Form_Element_Select('Type');
         $type->setOptions(array(
-                    'label' => 'Type',
+                    'label' => 'Loại bảo mật',
                     'required' => TRUE,
-                    'MultiOptions' => array(1 => 'Low security', 0 => 'High security')
+                    'MultiOptions' => array(1 => 'Bảo mật thấp', 0 => 'Bảo mật cao')
                 ))
                 ->setDecorators(array(
                     array('ViewHelper', array('helper' => 'formSelect')),
@@ -62,7 +62,7 @@ class Asset_Form_Item extends Zend_Form {
 
         $startDate = new Zend_Form_Element_Text('StartDate');
         $startDate->setOptions(array(
-                    'label' => 'Start Date',
+                    'label' => 'Bắt đầu SD',
                     'required' => TRUE
                 ))
                 ->setDecorators(array(
@@ -72,7 +72,7 @@ class Asset_Form_Item extends Zend_Form {
 
         $price = new Zend_Form_Element_Text('Price');
         $price->setOptions(array(
-                    'label' => 'Price',
+                    'label' => 'Giá',
                     'required' => TRUE,
                     'filters' => array('Int')
                 ))
@@ -83,7 +83,7 @@ class Asset_Form_Item extends Zend_Form {
 
         $warrantyTime = new Zend_Form_Element_Text('WarrantyTime');
         $warrantyTime->setOptions(array(
-                    'label' => 'Warranty Time',
+                    'label' => 'Bảo hành',
                     'required' => TRUE,
                     'filters' => array('Int')
                 ))
@@ -94,9 +94,9 @@ class Asset_Form_Item extends Zend_Form {
 
         $status = new Zend_Form_Element_Select('Status');
         $status->setOptions(array(
-                    'label' => 'Status',
+                    'label' => 'Tình trạng',
                     'required' => TRUE,
-                    'MultiOptions' => array(0 => 'Free', 1 => 'Busy', 2 => 'Corrupt')
+                    'MultiOptions' => array(0 => 'Có thể mượn', 1 => 'Đang cho mượn', 2 => 'Hỏng')
                 ))
                 ->setDecorators(array(
                     array('ViewHelper', array('helper' => 'formSelect')),
@@ -105,8 +105,8 @@ class Asset_Form_Item extends Zend_Form {
 
         $place = new Zend_Form_Element_Textarea('Place');
         $place->setOptions(array(
-                    'label' => 'Place',
-                    'style' => "width: 200px; height: 100px"
+                    'label' => 'Địa điểm hiện tại',
+                    'style' => "width: 200px; height: 50px"
                 ))
                 ->setDecorators(array(
                     array('ViewHelper', array('helper' => 'formTextarea')),

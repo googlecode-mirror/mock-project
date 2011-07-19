@@ -17,7 +17,7 @@ class Asset_Form_Request extends Zend_Form {
         
         $maTS = new Zend_Form_Element_Text('MaTS');
         $maTS->setOptions(array(
-                    'label' => 'Ma Tai San',
+                    'label' => 'Mã TS',
                     'required' => TRUE,
                     'filters' => array('StringTrim')
                 ))
@@ -37,31 +37,20 @@ class Asset_Form_Request extends Zend_Form {
 //                    array('Label', array('class' => 'label'))
 //                ));
 
-        $utype = new Zend_Form_Element_Select('Loai');
+        $utype = new Zend_Form_Element_Select('Type');
         $utype->setOptions(array(
-                    'label' => 'Loai',
+                    'label' => 'Loại yêu cầu',
                     'required' => TRUE,
-                    'MultiOptions' => array(0 => 'Free', 1 => 'Busy', 2 => 'Corrupt')
+                    'MultiOptions' => array(0 => 'Yêu cầu mượn TS', 1 => 'Yêu cầu nâng cấp')
                 ))
                 ->setDecorators(array(
                     array('ViewHelper', array('helper' => 'formSelect')),
                     array('Label', array('class' => 'label'))
                 ));
 
-        $date = new Zend_Form_Element_Text('Date');
-        $date->setOptions(array(
-                    'label' => 'Date',
-                    'required' => TRUE,
-                    'filters' => array('StringTrim')
-                ))
-                ->setDecorators(array(
-                    array('ViewHelper', array('helper' => 'formText')),
-                    array('Label', array('class' => 'label'))
-                ));
-
         $detail = new Zend_Form_Element_Textarea('Detail');
         $detail->setOptions(array(
-                    'label' => 'Detail',
+                    'label' => 'Chi tiết yêu cầu',
                     'style' => "width: 200px; height: 100px"
                 ))
                 ->setDecorators(array(
@@ -72,7 +61,7 @@ class Asset_Form_Request extends Zend_Form {
         $this->setName('item-form')
                 ->setMethod(Zend_Form::METHOD_POST)
                 ->setEnctype(Zend_Form::ENCTYPE_URLENCODED)
-                ->addElements(array($requestid, $maTS, $utype, $date, $detail))
+                ->addElements(array($requestid, $maTS, $utype, $detail))
                 ->setDecorators(array(
                     'FormElements',
                     array('HtmlTag', array('tag' => 'fieldset', 'style' => "padding: 0; border: 0; margin-top: 25px;")),

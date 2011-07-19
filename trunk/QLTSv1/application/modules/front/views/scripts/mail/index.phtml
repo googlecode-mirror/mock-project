@@ -60,10 +60,12 @@
                 },
                 Cancel: function() {
                     $( this ).dialog( "close" );
+                    window.location = '/QLTSv1/';
                 }
             },
             close: function() {
                 allFields.val( "" ).removeClass( "ui-state-error" );
+                window.location = '/QLTSv1/';
             }
         });
         $( "#contact-form" ).dialog( "open" );

@@ -40,7 +40,7 @@ class User_Model_DbTable_Member extends Zend_Db_Table_Abstract {
      * @return  -1  error email exist
      * @return  -2  error username exist
      */
-    public function addMember($username, $password, $role, $email, $fullname, $group, $phone, $address) {
+    public function addMember($username, $password, $role, $email, $fullname, $birthday, $group, $phone, $address) {
         // check exit email
         if ($this->checkEmail($email) != NULL) {
             return -1;
@@ -55,6 +55,7 @@ class User_Model_DbTable_Member extends Zend_Db_Table_Abstract {
             'Role' => $role,
             'Email' => $email,
             'FullName' => $fullname,
+            'Birthday' => $birthday,
             'Group' => $group,
             'Phone' => $phone,
             'Address' => $address
@@ -83,17 +84,17 @@ class User_Model_DbTable_Member extends Zend_Db_Table_Abstract {
      * @return  -1  error email exist
      * @return  -2  error username exist
      */
-    public function editMember($UserID, $username, $password, $role, $email, $fullname, $group, $phone, $address) {
+    public function editMember($UserID, $username, $password, $role, $email, $birthday, $fullname, $group, $phone, $address) {
         if ($UserID == NULL){
             return (int) 0;
         }
         $UserID = (int) $UserID;
         // check exit email
-        if ($this->checkEmail($email) != $UserID) {
+        if ($this->checkUsername($username) !=NULL && $this->checkEmail($email) != $UserID) {
             return (int) -1;
         }
         // check exit user
-        if ($this->checkUsername($username) != $UserID) {
+        if ($this->checkUsername($username) !=NULL && $this->checkUsername($username) != $UserID) {
             return (int) -2;
         }
         $data = array(
@@ -102,6 +103,7 @@ class User_Model_DbTable_Member extends Zend_Db_Table_Abstract {
             'Password' => $password,
             'Role' => $role,
             'Email' => $email,
+            'Birthday' => $birthday,
             'FullName' => $fullname,
             'Group' => $group,
             'Phone' => $phone,
@@ -193,11 +195,29 @@ class User_Model_DbTable_Member extends Zend_Db_Table_Abstract {
      * 
      * @todo get member info
      * @param $UserID Int
-     * @return password encode
+     * @return String
      */
     private function encodePassword($passwd) {
 //        return hash('sha256', 'hedspi' . $passwd . 'isk52');
         return $passwd;
     }
+    
+    /**
+     * function getPassword()
+     * 
+     * @todo get member info
+     * @param $UserID Int
+     * @return NULL | String
+     */
+    public function getPassword($UserID){}
+    
+    /**
+     * function setPassword()
+     * 
+     * @todo get member info
+     * @param $UserID Int
+     * @return NULL | String
+     */
+    public function setPassword($UserID,$password){}
 
 }

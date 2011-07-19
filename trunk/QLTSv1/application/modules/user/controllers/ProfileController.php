@@ -16,7 +16,10 @@ class User_ProfileController extends Zend_Controller_Action {
         }
         include_once APPLICATION_PATH . '/modules/user/models/DbTable/Member.php';
         $member = new User_Model_DbTable_Member();
-        $this->view->member = $member->getMember($userInfo->UserID);
+        $meInfo = $member->getMember($userInfo->UserID);
+        unset ($meInfo['Password']);
+        $this->view->member = $meInfo;
+        
     }
 
     public function editAction() {
@@ -42,24 +45,29 @@ class User_ProfileController extends Zend_Controller_Action {
                 }
                 $username = $form->getValue('Username');
                 $password = $form->getValue('Password');
+                $repassword = $form->getValue('RePassword');
                 $role = $userInfo->Role;
                 $fullname = $form->getValue('FullName');
                 $email = $form->getValue('Email');
+                $birthday = $form->getValue('Birthday');
                 $group = $form->getValue('Group');
                 $phone = $form->getValue('Phone');
                 $address = $form->getValue('Address');
-                $member = new User_Model_DbTable_Member();
-                $return = $member->editMember($UserID, $username, $password, $role, $email, $fullname, $group, $phone, $address);
-                switch ($return) {
-                    case -1: // loi email da ton tai
-                        break;
-                    case -2: // loi user da ton tai
-                        break;
-                    case 0: // loi ko update dc
-                        break;
-                    default : // update thanh cong
-                        $this->_redirect('/user/profile/detail/UserID/' . $UserID);
-                        break;
+                if ($password == $repassword) {
+                    $password = $this->encodePassword($repassword);
+                    $member = new User_Model_DbTable_Member();
+                    $return = $member->editMember($UserID, $username, $password, $role, $email, $birthday, $fullname, $group, $phone, $address);
+                    switch ($return) {
+                        case -1: // loi email da ton tai
+                            break;
+                        case -2: // loi user da ton tai
+                            break;
+                        case 0: // loi ko update dc
+                            break;
+                        default : // update thanh cong
+                            $this->_redirect('/user/profile/detail/UserID/' . $UserID);
+                            break;
+                    }
                 }
             } else {
                 $form->populate($formData);
@@ -68,6 +76,10 @@ class User_ProfileController extends Zend_Controller_Action {
             $member = new User_Model_DbTable_Member();
             $form->populate($member->getMember($userInfo->UserID));
         }
+    }
+    private function encodePassword($passwd) {
+        return hash('sha256', 'hedspi' . $passwd . 'isk52');
+//        return $passwd;
     }
 
 }

@@ -1,0 +1,255 @@
+<?php
+$this->jQuery()->enable()->uiEnable();
+$this->headLink()
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid.css'))
+        ->appendStylesheet($this->baseUrl('/lib/flexigrid-1.1/css/flexigrid-custom.css'));
+$this->headScript()
+        ->appendFile($this->baseUrl('/lib/flexigrid-1.1/js/flexigrid.js'));
+$this->pagetitle = 'Quản lý tin nhắn';
+?>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Inbox</a></li>
+        <li><a href="#tabs-2">Send Item</a></li>
+        <li><a href="#tabs-3">All Item</a></li>
+    </ul>
+    <div id="tabs-1">
+        <table class='gridTable1' style="display:none"></table>
+    </div>
+    <div id="tabs-2">
+        <table class='gridTable2' style="display:none"></table>
+    </div>
+    <div id="tabs-3">
+        <table class='gridTable3' style="display:none"></table>
+    </div>
+</div>
+<div id="dialog-form" style="display: none">
+    <p class="validateTips">All form fields are required.</p>
+    <form id="messageform" enctype="application/x-www-form-urlencoded" method="post" action="">
+        To: <br /><input type="text" name="To" id="To" /><br/>
+        Title: <br /><input type="text" name="Title" id="Title" /><br />
+        Content: <br />
+        <textarea name="Detail" id="Detail" style="width: 200px; height: 100px" rows="24" cols="80"></textarea>
+    </form>
+</div>
+<div id="dialog-confirm" title="Delete user confirm?" style="display: none">
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+        Information of item will be permanently deleted and cannot be recovered. Are you sure?
+    </p>
+</div>
+<script type="text/javascript">
+    <!--
+    $(document).ready(function(){
+        $( "#tabs" ).tabs();
+        var tips = $(".validateTips");
+        var mTo = $("#To"),
+        mTitle = $("#Title"),
+        mDetail = $("#Detail"),
+        allFields = $( [] ).add(mTo).add(mTitle).add(mDetail);
+        var gridTable1 = $(".gridTable1");
+        var gridTable2 = $(".gridTable2");
+        var gridTable3 = $(".gridTable3");
+        $("#tabs-1").click(fDataGrid(gridTable1,'/QLTSv1/asset/message/records/mode/1'));
+        $("#tabs-2").click(fDataGrid(gridTable2,'/QLTSv1/asset/message/records/mode/2'));
+        $("#tabs-3").click(fDataGrid(gridTable3,'/QLTSv1/asset/message/records/mode/3'));
+        function fDataGrid(gTB, t){
+            gTB.flexigrid({
+                url : t,
+                dataType : 'json',
+                colModel : [ 
+                    {display: 'From', name: 'SUsername', width: 80, sortable: true, align: 'left'},
+                    {display: 'To', name: 'RUsername', width: 80, sortable: false, align: 'left'},
+                    {display: 'Title', name: 'Title', width: 350, sortable: false, align: 'left'},
+                    {display: 'Date', name: 'Time', width: 100, sortable: true, align: 'left'},
+                ],
+                buttons : [ 
+                    {name : 'Add', bclass : 'add', onpress : add_record},
+                    {name : 'Delete', bclass : 'delete', onpress : delete_record}, 
+                    {separator : true},
+                    {name : 'Detail', bclass : 'detail', onpress : detail_record},
+                    //                    {name : 'Find as date', bclass : 'search', onpress : date_search},
+                    {separator : true},
+                    {name : 'Check', bclass : 'check', onpress : check_message}
+                ],
+                searchitems : [ 
+                    {display : 'Title', name : 'Title', isdefault : true },
+                    {display : 'From', name : 'SUsername' },
+                    {display : 'To', name : 'RUsername' },
+                    {display : 'Date', name : 'Time' },
+                ],
+                sortname : "MessageID",
+                sortorder : "desc",
+                usepager : true,
+                title : 'Message Table',
+                useRp : true,
+                rp : 15,
+                singleSelect : true,
+                showTableToggleBtn : false,
+                width : 1040,
+                height : 250
+            }); 
+        }                 
+        function detail_record(command,grid){
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Please select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                $.ajax({
+                    type: "POST",
+                    url: "/QLTSv1/asset/message/read",
+                    data: "MessageID="+id,
+                    success: function(data) {
+                        var getData = $.parseJSON(data);
+                        if(getData.status == 'success'){
+                            var tag = $("<div title='Message\'s information'></div>");
+                            tag.html(
+                            '<table><tr><td>From</td><td>:</td><td>'+getData.data.SUsername+
+                                '</td></tr><tr><td>To</td><td>:</td><td>'+getData.data.RUsername+
+                                '</td></tr><tr><td>Time</td><td>:</td><td>'+getData.data.Time+
+                                '</td></tr><tr><td>Title</td><td>:</td><td>'+getData.data.Title+
+                                '</td></tr><tr><td>Detail</td><td>:</td><td>'+getData.data.Detail+
+                                '</td></tr></table>'
+                        ).dialog({
+                                resizable: false,
+                                height:350,
+                                width: 250,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }else{
+                            // get user info error
+                            var tag = $("<div title='Error'></div>");
+                            tag.html("<span>"+getData.msg+"</span>").dialog({
+                                resizable: false,
+                                height:350,
+                                width: 450,
+                                modal: true,
+                                buttons: {
+                                    "OK": function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            }).dialog("open");
+                        }
+                    
+                    
+                    }
+                });
+            });
+        } // detail_record
+        //        function date_search(command,grid){
+        //            
+        //        } // date_search
+        function add_record(){
+            $("#dialog-form").attr('title', 'Create new message');
+            $("#dialog-form").dialog({
+                autoOpen: false,
+                height: 350,
+                width: 370,
+                modal: true,
+                buttons: {
+                    "Create a message": function() {
+                        var bValid = true;
+                        allFields.removeClass( "ui-state-error" );
+                        if ( bValid ) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/QLTSv1/asset/message/add",
+                                data: "To="+mTo.val()+"&Title="+mTitle.val()+"&Detail="+mDetail.val(),
+                                success: function (data){
+                                    var getData = $.parseJSON(data);
+                                    var tag = $("<div title='"+getData.status+"'></div>");
+                                    tag.html("<span>"+getData.msg+"</span>").dialog({
+                                        resizable: false,
+                                        height:200,
+                                        width: 300,
+                                        modal: true,
+                                        buttons: {
+                                            "OK": function() {
+                                                $('.gridTable2').flexReload();
+                                                $('.gridTable3').flexReload();
+                                                $( this ).dialog( "close" );
+                                            }
+                                        }
+                                    }).dialog("open");
+                                }
+                            });
+                            $( this ).dialog( "close" );      
+                        }
+                                            
+                    },
+                    Cancel: function() {
+                        $( this ).dialog( "close" );
+                    }
+                },
+                close: function() {
+                    allFields.val( "" ).removeClass( "ui-state-error" );
+                }
+            });
+            $( "#dialog-form" ).dialog( "open" );
+        } // add_record
+        function delete_record(command,grid){
+            var record_count = $('.trSelected',grid).length;
+            if (0 == record_count)
+            {
+                alert('Please select a record first by clicking on the appropriate row.');
+                return;
+            }
+            $('.trSelected',grid).each(function(){
+                var id = this.id.substr(3);
+                $( "#dialog-confirm" ).dialog({
+                    resizable: false,
+                    height:200,
+                    width:500,
+                    modal: true,
+                    buttons: {
+                        "Delete" : function() {
+                            
+                            $.ajax({
+                                type: "POST",
+                                url: '/QLTSv1/asset/message/delete',
+                                data: 'MessageID='+id,
+                                success: function (data){
+                                    var getData = $.parseJSON(data);
+                                    var tag = $("<div title='"+getData.status+"'></div>");
+                                    tag.html("<span>"+getData.msg+"</span>").dialog({
+                                        resizable: false,
+                                        height:200,
+                                        width: 300,
+                                        modal: true,
+                                        buttons: {
+                                            "OK": function() {
+                                                $('.gridTable1').flexReload();
+                                                $('.gridTable2').flexReload();
+                                                $('.gridTable3').flexReload();
+                                                $( this ).dialog( "close" );
+                                            }
+                                        }
+                                    }).dialog("open");
+                                }
+                            });
+                            $( this ).dialog( "close" );
+                        },
+                        Cancel: function() {
+                            $( this ).dialog( "close" );
+                        }
+                    }
+                });
+            });
+        } // delete_record
+        function check_message(){
+            window.location = '';
+        } // check message
+    });
+    -->
+</script>
