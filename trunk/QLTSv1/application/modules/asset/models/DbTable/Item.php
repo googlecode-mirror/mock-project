@@ -8,9 +8,9 @@
  */
 
 /**
- * Class User_Model_DbTable_Member
+ * Class Asset_Model_DbTable_Item
  *
- * @package Application/Module/User
+ * @package Application/Module/Asset
  * @version 1.0
  * @author TuanNA18
  *
