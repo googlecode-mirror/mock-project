@@ -48,7 +48,7 @@
 
         //Xoa Request theo ID
         public function deleteRequest($id){
-            $this->delete('RequestID = '. $this->_db->quote($id, 'INTEGER'));
+            $this->delete("RequestID = '$id'");
         }
 
         public function setUserID($id, $value){
