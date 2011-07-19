@@ -65,11 +65,12 @@ class ZendExt_Controller_Plugin_AccessControl extends Zend_Controller_Plugin_Abs
                 case 2: // IT
                     $role = "IT";
                     break;
+                case 3:
                 default : // User
                     $role = "User";
                     break;
             }
-            if (!$this->_acl->isAllowed($role, $module . ':' . $controller, $action)) {
+            if ($this->_acl->isAllowed($role, $module . ':' . $controller, $action) == FALSE) {
                 // Not allowed access
                 $request->setModuleName('front')
                         ->setControllerName('auth')
