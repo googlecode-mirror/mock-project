@@ -1,15 +1,22 @@
 <?php
 
-/*
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;       History
-  ;
-  ;       @package Modules/asset/models
-  ;       @version 1.0
-  ;       @author TuanNA18
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+/**
+ * QLTS v1
+ *
+ * @version 1.0
+ * @license
  */
 require_once 'Zend/Db/Table/Abstract.php';
+/**
+ * Class Asset_Model_DbTable_History
+ *
+ * @package Application/Module/Asset
+ * @version 1.0
+ * @author TuanNA18
+ *
+ * @todo Model data from iteminfor table in database
+ */
+
 class Asset_Model_DbTable_History extends Zend_Db_Table_Abstract {
 
     protected $_name = 'historyinfor';       //Ten bang thao tac
