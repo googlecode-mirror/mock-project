@@ -265,6 +265,11 @@ class Asset_RequestController extends Zend_Controller_Action {
                     echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
                     exit();
                 } elseif ($reInfo['Accept'] == 1) {
+                    $upgrade = new Asset_Model_DbTable_Upgrade();
+                    $it = new Asset_Model_DbTable_Item();
+                    $item = $it->getItemFromMa($reInfo['Ma_tai_san']);
+                    $ItemID = $item['ItemID'];
+                    $upgrade->addUpgrade($reInfo['UserID'], Zend_Auth::getInstance()->getIdentity()->UserID, $ItemID, $reInfo['Detail'], date("Y-m-d"));
                     $re->deleteRequest($requestid);
                     $status = 'Success';
                     $msg = 'Update database success';
