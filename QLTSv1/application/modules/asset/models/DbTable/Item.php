@@ -118,9 +118,7 @@ class Asset_Model_DbTable_Item extends Zend_Db_Table_Abstract {
      * @return  -1  error MaTS exist
      */
     public function editItem($ItemID, $MaTS, $TenTS, $Description, $Type, $StartDate, $Price, $WarrantyTime, $Status, $Place) {
-        if ($ItemID == NULL||$MaTS==NULL||$TenTS==NULL||$Description==NULL||$Type==NULL||
-        	$StartDate==NULL||$Price==NULL||$WarrantyTime==NULL||$Status==NULL||$Place==NULL) 
-        {
+        if (($ItemID==NULL)||($MaTS==NULL)||($Status===NULL)||($Place==NULL)) {
             return 0;
         }
         $ItemID = (int) $ItemID;

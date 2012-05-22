@@ -81,6 +81,7 @@ class Asset_LoanController extends Zend_Controller_Action {
             if ($loanInfo != NULL) {
                 $itemInfo = $item->getItemFromMa($MaTS);
                 if ($itemInfo != NULL) {
+                    //Zend_Debug::dump($item->editItem($itemInfo['ItemID'], $MaTS, $itemInfo['Ten_tai_san'], $itemInfo['Description'], $itemInfo['Type'], $itemInfo['StartDate'], $itemInfo['Price'], $itemInfo['WarrantyTime'], 0, 'Kho'));exit;
                     if ($history->addHistory($loanInfo['UserID'], Zend_Auth::getInstance()->getIdentity()->UserID, $itemInfo['ItemID'], 'Tra thiet bi', date('Y-m-d')) &&
                             $item->editItem($itemInfo['ItemID'], $MaTS, $itemInfo['Ten_tai_san'], $itemInfo['Description'], $itemInfo['Type'], $itemInfo['StartDate'], $itemInfo['Price'], $itemInfo['WarrantyTime'], 0, 'Kho') == 1 &&
                             $loan->deleteLoan($MaTS) != NULL) {
@@ -105,6 +106,42 @@ class Asset_LoanController extends Zend_Controller_Action {
         echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
     }
 
+    public function detailAction() {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        if ($this->getRequest()->isPost()) {
+            $MaTS = $this->getRequest()->getPost('MaTS', -1);
+//        $MaTS = $this->getRequest()->getParam('MaTS',-1);
+            if ($MaTS != -1) {
+//                require_once APPLICATION_PATH . '/modules/asset/models/DbTable/Item.php';
+                $loan = new Asset_Model_DbTable_Loan();
+                $ts = new Asset_Model_DbTable_Item();
+                $usi = new User_Model_DbTable_Member();
+                $status = 'success';
+                $data1 = (array) $loan->getLoanFromMa($MaTS);
+                $data2 = (array) $ts->getItemFromMa($MaTS);
+                $data3 = (array) $usi->getMember($data1['UserID']);
+                $data = array(
+                    'MaTS' => $MaTS,
+                    'TenTS' => $data2['Ten_tai_san'],
+                    'Nguoi_muon' => $data3['FullName'],
+                    'Username' => $data3['Username'],
+                    'Ngay_muon' => $data1['Date'],
+                    'Chi_tiet' => $data1['Detail']
+                );
+                echo Zend_Json::encode(array('status' => $status, 'data' => $data));
+            } else {
+                $status = 'error';
+                $msg = 'Not found this item.';
+                echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
+            }
+        } else {
+            $status = 'error';
+            $msg = 'Not found POST value.';
+            echo Zend_Json::encode(array('status' => $status, 'msg' => $msg));
+        }
+    }
+
     public function listAction() {
         // phan chuc nang theo user type
         // Super Admin, Admin : add, delete, list
@@ -113,7 +150,6 @@ class Asset_LoanController extends Zend_Controller_Action {
         // mode = 1 : list all item
         // mode = 2 : list all item minh muon (default)
 //        $this->view->mode = $this->_getParam('mode', 2);
-
 //        require_once APPLICATION_PATH . '/modules/asset/forms/Loan.php';
         $form = new Asset_Form_Loan();
         $this->view->form = $form;
