@@ -75,7 +75,7 @@ class ZendExt_Acl extends Zend_Acl {
                 ->allow('IT', 'asset:loan', array('list', 'records'))
                 ->allow('IT', 'asset:message', array('list', 'records', 'add', 'delete', 'read'))
                 ->allow('IT', 'asset:request', array('list', 'records', 'add', 'delete', 'accept', 'detail', 'disaccept', 'success'))
-                ->allow('IT', 'asset:upgrade', array('list', 'records', 'detail','add', 'delete'));
+                ->allow('IT', 'asset:upgrade', array('list', 'records', 'detail', 'add', 'delete'));
 
         // Permission of User user
         $this->allow('User', 'front:index', 'index')
@@ -83,7 +83,7 @@ class ZendExt_Acl extends Zend_Acl {
                 ->allow('User', 'user:profile', array('detail', 'edit'))
                 ->allow('User', 'asset:history', array('list', 'records', 'detail'))
                 ->allow('User', 'asset:item', array('list', 'records', 'detail'))
-                ->allow('User', 'asset:loan', array('list', 'records'))
+                ->allow('User', 'asset:loan', array('list', 'records', 'detail'))
                 ->allow('User', 'asset:message', array('list', 'records', 'add', 'delete', 'read'))
                 ->allow('User', 'asset:request', array('list', 'records', 'add', 'detail'))
                 ->allow('User', 'asset:upgrade', array('list', 'records', 'detail'));
@@ -92,7 +92,7 @@ class ZendExt_Acl extends Zend_Acl {
         $this->allow('Admin', 'user:user', array('list', 'records', 'edit', 'detail'))
                 ->allow('Admin', 'asset:history', array('list', 'records', 'detail'))
                 ->allow('Admin', 'asset:item', array('list', 'records', 'detail', 'edit'))
-                ->allow('Admin', 'asset:loan', array('list', 'records', 'add', 'delete'))
+                ->allow('Admin', 'asset:loan', array('list', 'records', 'add', 'delete', 'detail'))
                 ->allow('Admin', 'asset:request', array('list', 'records', 'add', 'delete', 'accept', 'detail', 'disaccept'))
                 ->allow('Admin', 'asset:upgrade', array('list', 'records', 'add', 'delete', 'detail'));
 
